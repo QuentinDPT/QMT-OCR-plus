@@ -3,10 +3,16 @@ using System.Runtime.CompilerServices;
 
 namespace QMTGroup.UI
 {
+    /// <summary>
+    /// DataContext for the main window
+    /// </summary>
     public class MainWindowContext : INotifyPropertyChanged
     {
         private int _currentMenuId = 0;
 
+        /// <summary>
+        /// This is the current menu id in the aside part of the software
+        /// </summary>
         public int CurrentMenuId
         {
             get => _currentMenuId;
@@ -25,8 +31,10 @@ namespace QMTGroup.UI
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Create the OnPropertyChanged method to raise the event
-        // The calling member's name will be used as the parameter.
+        /// <summary>
+        /// Call this method to update WPF binds
+        /// </summary>
+        /// <param name="name">The name of the bind to update. (all binds if null)</param>
         protected void OnPropertyChanged([CallerMemberName] string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

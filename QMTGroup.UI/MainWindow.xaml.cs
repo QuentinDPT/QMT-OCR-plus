@@ -1,5 +1,4 @@
 ﻿using Emgu.CV;
-using Emgu.CV.Cuda;
 using QMTGroup.ImageFilters.Filters;
 using QMTGroup.Models.Camera;
 using System.IO;
@@ -18,7 +17,9 @@ namespace QMTGroup.UI
 
         protected Camera? _capture;
 
-
+        /// <summary>
+        /// The dataContext for the UI
+        /// </summary>
         public MainWindowContext _dataContext = new MainWindowContext();
 
         public MainWindow()
@@ -96,6 +97,11 @@ namespace QMTGroup.UI
             }
         }
 
+        /// <summary>
+        /// Convert a Bitmap to a BitmapImage for the concurrency between camera thread and UI thread
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <returns></returns>
         private static BitmapImage _convertBitmap(System.Drawing.Bitmap bitmap)
         {
             MemoryStream ms = new MemoryStream();
@@ -113,6 +119,10 @@ namespace QMTGroup.UI
         private void _changeMenu(object sender, MouseButtonEventArgs e) => _changeMenu((sender as System.Windows.Controls.Grid).Name);
         private void _changeMenu(object sender, TouchEventArgs e) => _changeMenu((sender as System.Windows.Controls.Grid).Name);
 
+        /// <summary>
+        /// Change the aside menu and the content showed
+        /// </summary>
+        /// <param name="senderName"></param>
         private void _changeMenu(string senderName)
         {
             switch(senderName)
@@ -135,6 +145,9 @@ namespace QMTGroup.UI
             }
         }
 
+        /// <summary>
+        /// Change the filter when key down
+        /// </summary>
         private void QMTMainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             ToggleFilters();
