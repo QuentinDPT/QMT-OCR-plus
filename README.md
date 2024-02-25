@@ -26,3 +26,19 @@ Je regrettes fortement de ne pas avoir pu plus tester mon code pendant ces deux 
 L'introduction d'un modèle MVVM impose un modèle de données. N'ayant pas identifié de modèle de données évident présent dans l'application, je n'ai pas pu mettre en place cette architechture.
 
 Cependant, j'ai réaliser une structure qui permettra de faire évoluer le logiciel facilement.
+
+# Organisation
+
+Le projet est constitué de 4 projets indépendants.
+
+ - `QMTGroup.UI` : regroupe la partie présentation utilisateur
+ - `QMTGroup.Models` : regroupe les modeles de base du logiciel. Définis ce qu'est une caméra, qu'un filtre.
+ - `QMTGroup.ImageFilters` : regroupe quelques filtres utilisables au sein de projet.
+ - `QMTGroup.IO` : regroupe les différents types de modèles qui produisent des données (vidéo principalement).
+
+Le projet `QMTGroup.UnitTests` regroupe les tests unitaires présent au sein du projet.
+
+Pour tester le programme, il faut executer le projet `QMTGroup.UI` pour pouvoir tester le logiciel avec toutes ces dépendances.
+
+![Sans titre](https://github.com/QuentinDPT/QMT-OCR-plus/assets/45800885/7e5b8514-85dd-49cd-ae31-ffd5762a1d41)
+
