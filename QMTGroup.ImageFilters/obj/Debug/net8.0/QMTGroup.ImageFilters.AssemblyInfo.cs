@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QMTGroup.ImageFilters")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+61bb2a7d938f80a137e5faebe7c43cc82b8109ff")]
 [assembly: System.Reflection.AssemblyProductAttribute("QMTGroup.ImageFilters")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QMTGroup.ImageFilters")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

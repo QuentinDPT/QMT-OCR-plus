@@ -4,11 +4,14 @@ using System.Drawing;
 namespace QMTGroup.ImageFilters.Filters
 {
     /// <summary>
-    /// A simple GaussConvolution (3x3)
+    /// A simple GaussConvolution
     /// </summary>
     public class ConvolutionGauss : Convolution
     {
         /*
+        /// <summary>
+        /// GaussConvolution (3x3)
+        /// </summary>
         public ConvolutionGauss() : base(
             new ConvolutionKernelF(new float[3, 3]{
                     {1.0f/9.0f, 2.0f/9.0f, 1.0f/9.0f},
@@ -18,6 +21,9 @@ namespace QMTGroup.ImageFilters.Filters
         { }
         */
 
+        /// <summary>
+        /// GaussConvolution (5x5)
+        /// </summary>
         public ConvolutionGauss() : base(
             new ConvolutionKernelF(new float[5, 5]{
                     {1.0f/273.0f, 4.0f/273.0f, 7.0f/273.0f, 4.0f/273.0f,1/273.0f},

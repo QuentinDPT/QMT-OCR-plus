@@ -13,3 +13,4 @@ E:\Dev\Exercices\QMTGroup\QMTGroup.ImageFilters\obj\Debug\net8.0\QMTGroup.ImageF
 E:\Dev\Exercices\QMTGroup\QMTGroup.ImageFilters\obj\Debug\net8.0\refint\QMTGroup.ImageFilters.dll
 E:\Dev\Exercices\QMTGroup\QMTGroup.ImageFilters\obj\Debug\net8.0\QMTGroup.ImageFilters.pdb
 E:\Dev\Exercices\QMTGroup\QMTGroup.ImageFilters\obj\Debug\net8.0\ref\QMTGroup.ImageFilters.dll
+E:\Dev\Exercices\QMTGroup\QMTGroup.ImageFilters\obj\Debug\net8.0\QMTGroup.ImageFilters.sourcelink.json

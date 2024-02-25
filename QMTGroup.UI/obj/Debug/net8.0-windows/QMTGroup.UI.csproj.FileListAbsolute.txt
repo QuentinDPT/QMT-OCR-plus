@@ -60,3 +60,4 @@ E:\Dev\Exercices\QMTGroup\QMTGroup.UI\obj\Debug\net8.0-windows\refint\QMTGroup.U
 E:\Dev\Exercices\QMTGroup\QMTGroup.UI\obj\Debug\net8.0-windows\QMTGroup.UI.pdb
 E:\Dev\Exercices\QMTGroup\QMTGroup.UI\obj\Debug\net8.0-windows\QMTGroup.UI.genruntimeconfig.cache
 E:\Dev\Exercices\QMTGroup\QMTGroup.UI\obj\Debug\net8.0-windows\ref\QMTGroup.UI.dll
+E:\Dev\Exercices\QMTGroup\QMTGroup.UI\obj\Debug\net8.0-windows\QMTGroup.UI.sourcelink.json
