@@ -1,0 +1,12 @@
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\bin\Debug\net8.0\QMTGroup.Models.deps.json
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\bin\Debug\net8.0\QMTGroup.Models.dll
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\bin\Debug\net8.0\QMTGroup.Models.pdb
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.csproj.AssemblyReference.cache
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.GeneratedMSBuildEditorConfig.editorconfig
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.AssemblyInfoInputs.cache
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.AssemblyInfo.cs
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.csproj.CoreCompileInputs.cache
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.dll
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\refint\QMTGroup.Models.dll
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\QMTGroup.Models.pdb
+E:\Dev\Exercices\QMTGroup\QMTGroup.Models\obj\Debug\net8.0\ref\QMTGroup.Models.dll

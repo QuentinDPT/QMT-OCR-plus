@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="brand.png" />
+    <None Remove="clock.jpg" />
+    <None Remove="clock.png" />
+    <None Remove="noCamera.png" />
+    <None Remove="vlcsnap-2023-05-18-18h49m06s936.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.Bitmap" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.8.1.5350" />
+    <PackageReference Include="Emgu.CV.Wpf" Version="4.8.1.5350" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
+    <ProjectReference Include="..\QMTGroup.IO\QMTGroup.IO.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="brand.png" />
+    <Resource Include="clock.png" />
+    <Resource Include="noCamera.png" />
+  </ItemGroup>
+</Project>

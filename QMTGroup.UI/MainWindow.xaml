@@ -1,0 +1,75 @@
+﻿<Window x:Name="QMTMainWindow" x:Class="QMTGroup.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:QMTGroup.UI"
+        mc:Ignorable="d"
+        Title="qmtocr+" Height="450" Width="800" Initialized="MainWindow_Initialized" KeyDown="QMTMainWindow_KeyDown">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid x:Name="Header" VerticalAlignment="Top">
+            <Rectangle Stroke="#FF283482" VerticalAlignment="Top" Height="79" Fill="#FF283482"/>
+            <Label HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="41" Width="232" Foreground="White" FontSize="24" FontFamily="Tahoma">
+                <TextBlock><Bold>qmt</Bold>ocr+</TextBlock>
+            </Label>
+        </Grid>
+
+        <Grid x:Name="Aside" Width="101" HorizontalAlignment="Left" Margin="0,79,0,0" Background="#FFD5D9EC">
+            <Grid VerticalAlignment="Top">
+                <Grid x:Name="MenuSectionSupervision" VerticalAlignment="Top" MouseDown="_changeMenu" TouchDown="_changeMenu" >
+                    <Rectangle VerticalAlignment="Top" Height="25" Margin="3,3,3,0" RadiusX="3" RadiusY="3" Visibility="{Binding Path=IsInSupervision, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="White" Opacity="0.8"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Label FontFamily="Arial" Content="👁‍🗨" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Margin="3,5,0,0" Foreground="#FF283482"/>
+                    <Label FontFamily="Arial" Content="Supervision" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Foreground="#FF283482" Margin="20,5,0,0"/>
+                </Grid>
+                <Grid x:Name="MenuSectionRecipe" VerticalAlignment="Top" Margin="0,28,0,0" MouseDown="_changeMenu" TouchDown="_changeMenu" >
+                    <Rectangle VerticalAlignment="Top" Height="25" Margin="3,3,3,0" RadiusX="3" RadiusY="3" Visibility="{Binding Path=IsInRecipe, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="White" Opacity="0.8"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Label FontFamily="Arial" Content="📄" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Margin="3,5,0,0" Foreground="#FF283482"/>
+                    <Label FontFamily="Arial" Content="Reciepe" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Foreground="#FF283482" Margin="20,5,0,0"/>
+                </Grid>
+                <Grid x:Name="MenuSectionConfiguration" VerticalAlignment="Top" Margin="0,56,0,0" MouseDown="_changeMenu" TouchDown="_changeMenu" >
+                    <Rectangle VerticalAlignment="Top" Height="25" Margin="3,3,3,0" RadiusX="3" RadiusY="3" Visibility="{Binding Path=IsInConfiguration, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="White" Opacity="0.8"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Label FontFamily="Arial" Content="⚙️" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Margin="3,5,0,0" Foreground="#FF283482"/>
+                    <Label FontFamily="Arial" Content="Configuration" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Foreground="#FF283482" Margin="20,5,0,0"/>
+                </Grid>
+                <Grid x:Name="MenuSectionDiagnostic" VerticalAlignment="Top" Margin="0,84,0,0" MouseDown="_changeMenu" TouchDown="_changeMenu" >
+                    <Rectangle VerticalAlignment="Top" Height="25" Margin="3,3,3,0" RadiusX="3" RadiusY="3" Visibility="{Binding Path=IsInDiagnostic, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Rectangle.Fill>
+                            <SolidColorBrush Color="White" Opacity="0.8"/>
+                        </Rectangle.Fill>
+                    </Rectangle>
+                    <Label FontFamily="Arial" Content="⚠️" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Margin="3,5,0,0" Foreground="#FF283482"/>
+                    <Label FontFamily="Arial" Content="Diagnostique" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10" Foreground="#FF283482" Margin="20,5,0,0"/>
+                </Grid>
+            </Grid>
+            <Image x:Name="ImgBrand" Height="50" Margin="10,0,10,10" VerticalAlignment="Bottom" Source="/brand.png"/>
+        </Grid>
+
+        <Grid x:Name="Main" Margin="101,79,0,0">
+            <Image x:Name="Background" Source="/clock.png" RenderTransformOrigin="0.5,0.5" Stretch="UniformToFill" Opacity="0.7"/>
+            <Grid x:Name="SupervisionTab"  Visibility="{Binding Path=IsInSupervision, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Image x:Name="VideoStream" RenderTransformOrigin="0.5,0.5" Source="noCamera.png" VerticalAlignment="Center" HorizontalAlignment="Center">
+                </Image>
+            </Grid>
+            <Grid x:Name="ConfigurationTab"  Visibility="{Binding Path=IsInConfiguration, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Frame x:Name="ConfigureFrame" Source="Components/Configure.xaml" />
+            </Grid>
+        </Grid>
+
+
+    </Grid>
+</Window>
