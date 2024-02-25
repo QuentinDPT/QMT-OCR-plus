@@ -3,14 +3,23 @@ using QMTGroup.Models.ImageFilters;
 
 namespace QMTGroup.Models.Camera
 {
+    /// <summary>
+    /// A camera produces a video content
+    /// </summary>
     public abstract class Camera : VideoCapture
     {
         protected Mat _image;
 
         protected IImageFilter? _imageFilter = null;
 
+        /// <summary>
+        /// The image from the video stream
+        /// </summary>
         public Mat Image { get { return _image; } }
 
+        /// <summary>
+        /// The image from the video stream with a filter applied
+        /// </summary>
         public Mat ImageFiltered {
             get {
                 if (_imageFilter == null)
@@ -19,6 +28,9 @@ namespace QMTGroup.Models.Camera
             }
         }
 
+        /// <summary>
+        /// Get or set the filter available with the ImageFiltered
+        /// </summary>
         public IImageFilter? ImageFilter {
             get => _imageFilter;
             set
