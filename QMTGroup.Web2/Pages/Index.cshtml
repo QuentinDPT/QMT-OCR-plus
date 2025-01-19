@@ -1,0 +1,31 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script>
+
+    <script>
+        var LastFrame = Date.now()
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/videoHub")
+            .build();
+
+        connection.on("ReceiveFrame", function (base64Image) {
+            document.getElementById("videoFrame").src = "data:image/jpeg;base64," + base64Image;
+            document.getElementById("LastFrame").innerHTML = Math.floor(1/((Date.now() - LastFrame)/1000))
+            LastFrame = Date.now()
+        });
+
+        connection.start().catch(err => console.error(err));
+    </script>
+}
+
+<div class="text-center">
+
+    <h1>Flux Vidéo</h1>
+    <img id="videoFrame" width="1000" height="562" />
+    <p><span id="LastFrame"></span> fps</p>
+</div>

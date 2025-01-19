@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.ImageFilters", "QM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.UnitTests", "QMTGroup.UnitTests\QMTGroup.UnitTests.csproj", "{0DB048FB-4E08-45E3-B7C0-3F301923B895}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Web", "QMTGroup.Web2\QMTGroup.Web.csproj", "{1EB3A58E-4DD4-4441-BB57-77E3895F7889}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0DB048FB-4E08-45E3-B7C0-3F301923B895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DB048FB-4E08-45E3-B7C0-3F301923B895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DB048FB-4E08-45E3-B7C0-3F301923B895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EB3A58E-4DD4-4441-BB57-77E3895F7889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB3A58E-4DD4-4441-BB57-77E3895F7889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EB3A58E-4DD4-4441-BB57-77E3895F7889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EB3A58E-4DD4-4441-BB57-77E3895F7889}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

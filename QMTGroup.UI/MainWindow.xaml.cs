@@ -41,7 +41,7 @@ namespace QMTGroup.UI
                 _capture = cameraCreatorDelegate.Invoke();
                 if (_capture == null)
                     throw new ArgumentNullException();
-                _capture.ImageFilter = new ConvolutionGauss();
+                _capture.ImageFilter = new ToGrayScales();
                 _capture.Start();
                 _capture.ImageGrabbed += _onImageRecieved;
             })).Start();
