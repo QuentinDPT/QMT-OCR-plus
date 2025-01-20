@@ -3,6 +3,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Microsoft.AspNetCore.SignalR;
 using QMTGroup.IO.Camera;
+using QMTGroup.Models.ImageFilters;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.PixelFormats;
@@ -14,6 +15,14 @@ namespace QMTGroup.Web2.Service
         private readonly IHubContext<VideoHub> _hubContext;
         private readonly VideoCapture _capture;
         private readonly CancellationTokenSource _cts = new();
+
+        public IImageFilter? ImageFilter
+        {
+            get => _imageFilter;
+            set => _imageFilter = value;
+        }
+
+        private IImageFilter? _imageFilter = null;
 
         public VideoStreamService(IHubContext<VideoHub> hubContext)
         {
@@ -29,10 +38,15 @@ namespace QMTGroup.Web2.Service
             {
                 while (!_cts.Token.IsCancellationRequested)
                 {
-                    using var frame = new Mat();
+                    var frame = new Mat();
                     _capture.Read(frame);
                     if (!frame.IsEmpty)
                     {
+                        if(_imageFilter != null)
+                        {
+                            frame = _imageFilter.ApplyFilter(frame);
+                        }
+
                         var base64Image = ConvertMatToBase64(frame);
                         await _hubContext.Clients.All.SendAsync("ReceiveFrame", base64Image);
                     }

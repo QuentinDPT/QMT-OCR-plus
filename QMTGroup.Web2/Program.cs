@@ -31,6 +31,7 @@ namespace QMTGroup.Web2
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<VideoHub>("/videoHub");
+                endpoints.MapControllers();
             });
 
             app.UseAuthorization();

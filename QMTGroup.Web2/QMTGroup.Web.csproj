@@ -20,6 +20,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
 		<ProjectReference Include="..\QMTGroup.IO\QMTGroup.IO.csproj" />
 	</ItemGroup>
 </Project>
