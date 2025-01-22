@@ -38,11 +38,78 @@
         };
 
         document.getElementById("MD2").onclick = function(e){
+            var sigma = document.getElementById("sigma").value;
+            var kernelSize = document.getElementById("kernelSize").value;
+
+
             $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/2",
+                url: "https://localhost:7083/api/videoStream/apply/2?parameter1=" + kernelSize + "&parameter2=" + sigma,
                 type: 'GET',
             });
         };
+    </script>
+
+    <script>
+        document.getElementById("MD2-param").onclick = function(e){
+            $('#paramModal').modal('toggle')
+        };
+    </script>
+
+    <script>
+        function drawCurve() {
+            const canvas = document.getElementById("gaussCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Efface le canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const sigma = parseFloat(document.getElementById("sigma").value);
+            const mean = 0; // Moyenne
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Échelle
+            const scaleX = 50; // pixels par unité
+            const scaleY = 200; // pixels pour la hauteur max
+
+            // Fonction de densité de probabilité de Gauss
+            function gaussian(x, mean, sigma) {
+                return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-((x - mean) ** 2) / (2 * sigma ** 2));
+            }
+
+            // Tracer les axes
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            ctx.lineTo(width, height); // Axe X
+            ctx.moveTo(width / 2, 0);
+            ctx.lineTo(width / 2, height); // Axe Y
+            ctx.strokeStyle = "#333";
+            ctx.stroke();
+
+            // Dessiner la courbe de Gauss
+            ctx.beginPath();
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+
+            for (let x = -8 * sigma; x <= 8 * sigma; x += 0.01) {
+                const px = width / 2 + x * scaleX;
+                const py = height - gaussian(x, mean, sigma) * scaleY;
+
+                if (x === -8 * sigma) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+        }
+
+        document.getElementById("sigma").oninput = function(){
+            this.nextElementSibling.value = this.value;
+            drawCurve();
+        }
+
+        drawCurve();
     </script>
 }
 
@@ -54,8 +121,50 @@
     </div>
     <div class="d-flex flex-column w-100 p-2">
         <h1>Filtres</h1>
-        <button id="STD" class="btn btn-primary">Standard</button>
-        <button id="MD1" class="btn btn-outline-secondary">Filtre 1</button>
-        <button id="MD2" class="btn btn-outline-secondary">Filtre 2</button>
+        <table>
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <button id="STD" class="btn btn-primary mb-1 w-100 text-start">Source</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="MD1" class="btn btn-outline-secondary mb-1 w-100 text-start">Nuances de gris</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="d-flex">
+                        <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
+                        <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="paramModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Parametres du filtre</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="kernelSize">Taille du noyeau</label>
+                        <input type="text" class="form-control" id="kernelSize" placeholder="11" value="11">
+                    </div>
+                    <div class="form-group">
+                        <label for="sigma">Ecart type</label>
+                        <div class="d-flex">
+                            <input type="range" class="form-range order-1" id="sigma" value="1,5" min=".1" max="5" step=".1">
+                            <output class="order-0 mx-2">1.5</output>
+                        </div>
+                        <canvas id="gaussCanvas" class="m-1 w-100" width="400" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -8,30 +8,54 @@ namespace QMTGroup.ImageFilters.Filters
     /// </summary>
     public class ConvolutionGauss : Convolution
     {
-        /*
-        /// <summary>
-        /// GaussConvolution (3x3)
-        /// </summary>
-        public ConvolutionGauss() : base(
-            new ConvolutionKernelF(new float[3, 3]{
-                    {1.0f/9.0f, 2.0f/9.0f, 1.0f/9.0f},
-                    {2.0f/9.0f, 4.0f/9.0f, 2.0f/9.0f},
-                    {1.0f/9.0f, 2.0f/9.0f, 1.0f/9.0f}},
-                new Point(1, 1)))
-        { }
-        */
 
         /// <summary>
         /// GaussConvolution (5x5)
         /// </summary>
         public ConvolutionGauss() : base(
-            new ConvolutionKernelF(new float[5, 5]{
-                    {1.0f/273.0f, 4.0f/273.0f, 7.0f/273.0f, 4.0f/273.0f,1/273.0f},
-                    {4.0f/273.0f,16.0f/273.0f,26.0f/273.0f,16.0f/273.0f,4/273.0f},
-                    {7.0f/273.0f,26.0f/273.0f,41.0f/273.0f,26.0f/273.0f,7/273.0f},
-                    {4.0f/273.0f,16.0f/273.0f,26.0f/273.0f,16.0f/273.0f,4/273.0f},
-                    {1.0f/273.0f, 4.0f/273.0f, 7.0f/273.0f, 4.0f/273.0f,1/273.0f}},
+            new ConvolutionKernelF(
+                _generateGaussianKernel(5, 1.5f),
                 new Point(2, 2)))
         { }
+
+
+        /// <summary>
+        /// GaussConvolution
+        /// </summary>
+        /// <param name="size">Size of the convolution kernel</param>
+        /// <param name="sigma">Ecart type</param>
+        public ConvolutionGauss(int size, float sigma = 1.5f) : base(
+            new ConvolutionKernelF(
+                _generateGaussianKernel(size, sigma),
+                new Point((int)Math.Truncate(size / 2f), (int)Math.Truncate(size / 2f))))
+        { }
+
+        private static float[,] _generateGaussianKernel(int size, float sigma)
+        {
+            float[,] kernel = new float[size, size];
+            float sum = 0;
+            int halfSize = size / 2;
+
+            for (int i = -halfSize; i <= halfSize; i++)
+            {
+                for (int j = -halfSize; j <= halfSize; j++)
+                {
+                    float value = (float)(Math.Exp(-(i * i + j * j) / (2 * sigma * sigma)) / (2 * Math.PI * sigma * sigma));
+                    kernel[i + halfSize, j + halfSize] = value;
+                    sum += value;
+                }
+            }
+
+            // Normalisation
+            for (int i = 0; i < size; i++)
+            {
+                for (int j = 0; j < size; j++)
+                {
+                    kernel[i, j] /= sum;
+                }
+            }
+
+            return kernel;
+        }
     }
 }

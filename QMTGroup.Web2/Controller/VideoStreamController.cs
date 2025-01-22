@@ -23,7 +23,7 @@ namespace QMTGroup.Web2.Controller
         }
 
         [HttpGet("apply/{filterId}")]
-        public IActionResult ApplyFilter(int filterId)
+        public IActionResult ApplyFilter(int filterId, [FromQuery] string? parameter1 = null, [FromQuery] string? parameter2 = null)
         {
             switch (filterId)
             {
@@ -34,7 +34,19 @@ namespace QMTGroup.Web2.Controller
                     _videoStreamService.ImageFilter = new ToGrayScales();
                     return Ok();
                 case 2:
-                    _videoStreamService.ImageFilter = new ConvolutionGauss();
+                    if (int.TryParse(parameter1, out int size))
+                    {
+                        float sigma;
+                        if (!float.TryParse(parameter2, out sigma))
+                            sigma = 1.5f;
+
+                        _videoStreamService.ImageFilter = new ConvolutionGauss(size, sigma);
+                    }
+                    else
+                    {
+                        _videoStreamService.ImageFilter = new ConvolutionGauss();
+                    }
+
                     return Ok();
             }
             return Problem();
