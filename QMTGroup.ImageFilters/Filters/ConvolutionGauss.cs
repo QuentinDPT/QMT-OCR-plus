@@ -1,5 +1,4 @@
-﻿using Emgu.CV;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace QMTGroup.ImageFilters.Filters
 {
@@ -8,7 +7,7 @@ namespace QMTGroup.ImageFilters.Filters
     /// </summary>
     public class ConvolutionGauss : Convolution
     {
-
+        /*
         /// <summary>
         /// GaussConvolution (5x5)
         /// </summary>
@@ -29,6 +28,7 @@ namespace QMTGroup.ImageFilters.Filters
                 _generateGaussianKernel(size, sigma),
                 new Point((int)Math.Truncate(size / 2f), (int)Math.Truncate(size / 2f))))
         { }
+        //*/
 
         private static float[,] _generateGaussianKernel(int size, float sigma)
         {

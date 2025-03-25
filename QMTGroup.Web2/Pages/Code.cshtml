@@ -9,6 +9,7 @@
     <style>
         #editor {
             border: 1px solid #ccc;
+            min-height: 10ch;
         }
 
         .annotation {
@@ -18,21 +19,157 @@
             margin: 2px 0;
             font-size: 12px;
         }
+
+        .CodeMirror {
+            height: 100% !important;
+        }
+
     </style>
+    <style>
+        .CodeMirror-gutters {
+            background: #f5f5f5;
+            border-right: 1px solid #ddd;
+        }
+
+        .CodeMirror-linenumber {
+            color: #888;
+        }
+
+        .custom-gutter {
+            width: 22px;
+        }
+
+        .custom-marker {
+            color: #888;
+            text-align: end;
+        }
+
+        .info-panel {
+            width: 200px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+            border-left: none;
+            position: relative;
+        }
+
+        .info-panel > *{
+            height: 24px;
+            background: purple;
+        }
+        </style>
 }
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.js"></script>
     <script>
+        var documentName = "MonDoc";
+        var codeHasChanged = false;
+
+        document.getElementById("docName").addEventListener("input", function(event) {
+          documentName = event.target.value;
+          codeHasChanged = true;
+        });
+        document.getElementById("docName").value = documentName;
+
         const luaKeywords = [
             "and", "break", "do", "else", "elseif", "end", "false",
             "for", "function", "if", "in", "local", "nil", "not",
             "or", "repeat", "return", "then", "true", "until", "while",
-            "print", "pairs", "ipairs", "math", "table", "string"
+            "print", "pairs", "ipairs", "math", "table", "string", "require"
         ];
 
-        var personnalKeywords = [ "montrucpersonnel", "montrucpersonnel2", "mon_truc_personnelee" ];
+        function addGutterMarker(line, text) {
+            var marker = document.createElement("div");
+            marker.className = "custom-marker";
+            marker.innerHTML = text;
+            editor.setGutterMarker(line, "custom-gutter", marker);
+        }
+
+        function clearGutterMarker(){
+            editor.clearGutter("custom-gutter");
+        }
+
+        function executeCode(){
+            document.getElementById("executionButton").disabled = true;
+            clearGutterMarker();
+
+            document.getElementById("infoPanel").innerHTML = "";
+
+
+            for(let i = 0; i < editor.lineCount() ; i++){
+                document.getElementById("infoPanel").innerHTML += "<div data-toggle=\"tooltip\" data-placement=\"top\" style='width:0'></div>";
+            }
+
+            $.ajax({
+                url: 'api/code/execute/' + documentName, // API endpoint
+                type: 'GET', // Méthode HTTP POST
+                contentType: 'application/json; charset=UTF-8', // Type de contenu
+                success: function(response) {
+                    var totalExecution = 0;
+                    var cumulativeOffset = 0;
+                    for(i of response){
+                        totalExecution += i.executionDuration;
+                    }
+                    for(i of response){
+                        let time = "";
+                        if(i.executionDuration > 0){
+                            if(i.executionDuration > 10000000){
+                                time = (Math.floor(i.executionDuration / 10000)/1000).toFixed(2) + " s";
+                            }else{
+                                time = (Math.floor(i.executionDuration / 100)/100).toFixed(2) + "ms";
+                            }
+
+                            document.getElementById("infoPanel").children[i.lineIndex].style = "margin-left:" + cumulativeOffset + "%; width:" + (i.executionDuration/totalExecution*100) + "%";
+                            document.getElementById("infoPanel").children[i.lineIndex].title = time;
+
+                            cumulativeOffset += i.executionDuration/totalExecution*100;
+
+                            addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + time + "\">✔️</span>");
+                        }else{
+                            if(i.warning != null){
+                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.warning + "\">⚠️</span>");
+                            }else{
+                                addGutterMarker(i.lineIndex, " ");
+                            }
+                        }
+                    }
+
+                    document.getElementById("executionButton").disabled = false;
+                },
+                error: function(error) {
+                    var response = error.responseJSON;
+                    for(i of response){
+                        let time = "";
+                        if(i.executionDuration > 0){
+                            if(i.executionDuration > 10000000){
+                                time = (Math.floor(i.executionDuration / 10000)/1000).toFixed(2) + " s";
+                            }else{
+                                time = (Math.floor(i.executionDuration / 100)/100).toFixed(2) + "ms";
+                            }
+
+                            addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + time + "\">✔️</span>");
+                        }else{
+                            addGutterMarker(i.lineIndex, " ");
+
+                            if(i.warning != null){
+                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.warning + "\">⚠️</span>");
+                            }
+
+                            if(i.error != null){
+                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.error + "\">❌</span>");
+                            }
+                        }
+                    }
+
+                    document.getElementById("executionButton").disabled = false;
+                }
+            });
+        }
+
+        document.getElementById("executionButton").onclick = executeCode;
+
+        var personnalKeywords = [ ];
 
         function luaHint(editor) {
             const cursor = editor.getCursor();
@@ -53,9 +190,11 @@
         const editor = CodeMirror(document.getElementById('editor'), {
             mode: 'text/x-lua',
             lineNumbers: true,
+            gutters: ["CodeMirror-linenumbers", "custom-gutter"],
             theme: 'default',
             extraKeys: {
-                "Ctrl-Space": "autocomplete"
+                "Ctrl-Space": "autocomplete",
+                "Ctrl-Enter": executeCode
             }
         });
 
@@ -74,17 +213,17 @@
         const annotationWidgets = [];
 
         // Fonction pour ajouter une annotation
-        function addAnnotation(line, text) {
+        function addAnnotation(line, text, above = true, className = "") {
             // Sauvegarder la position de défilement actuelle
             const scrollInfo = editor.getScrollInfo();
 
             // Créer l'annotation
             const annotation = document.createElement('div');
-            annotation.className = 'annotation';
+            annotation.className = 'annotation ' + className;
             annotation.textContent = text;
 
             // Ajouter le widget
-            const widget = editor.addLineWidget(line, annotation, { above: true });
+            const widget = editor.addLineWidget(line, annotation, { above: above });
             annotationWidgets.push(widget);
 
             // Restaurer la position de défilement
@@ -103,27 +242,41 @@
             // Restaurer la position de défilement
             editor.scrollTo(scrollInfo.left, scrollInfo.top);
         }
-
-
-        // Exemple : Ajouter une annotation à la ligne 2
-        editor.setValue("function ProcessImage()\n\t_maFonctionPrivee()\n\t_fonctionPrivee()\nend\n\n\nfunction _maFonctionPrivee()\n\nend\n\nfunction _fonctionPrivee()\n\nend");
     </script>
 
     <script>
         var codeMemory = "";
 
-        setInterval(function(){
-            let code = editor.getValue();
+        var actualCodeRequirements = [];
 
-            if(code == codeMemory)
+        setInterval(function(){
+            let codeStr = editor.getValue();
+
+            if(codeStr == codeMemory && !codeHasChanged)
                 return;
 
-            codeMemory = code;
+            codeMemory = codeStr;
+            codeHasChanged = false;
 
-            codeLines = code.split('\n')
+            $.ajax({
+                url: 'api/code/' + documentName, // API endpoint
+                type: 'POST', // Méthode HTTP POST
+                data: JSON.stringify(codeStr), // Convertir le contenu en JSON
+                contentType: 'application/json; charset=UTF-8', // Type de contenu
+                success: function(response) {
+                    console.log('Code sauvegardé avec succès:', response);
+                },
+                error: function(error) {
+                    console.error('Erreur lors de la sauvegarde du code:', error);
+                }
+            });
+
+            codeLines = codeStr.split('\n')
 
             // Sauvegarder la position de défilement actuelle
             const scrollInfo = editor.getScrollInfo();
+
+            var requirementList = [];
 
             clearAnnotations();
 
@@ -136,17 +289,64 @@
 
                 if(match){
                     if(!match[1].startsWith("_"))
-                        addAnnotation(i, "Global." + match[1])
+                        addAnnotation(i, documentName + "." + match[1])
                 }
+
+                const requireRegex = /^require\ ([a-zA-Z]+[a-zA-Z0-9_\.]*)\ *(\ +--.*)*$/
+                const matchReq = obj.match(requireRegex);
+
+                if(matchReq){
+                    if(!requirementList.includes(matchReq[1]))
+                        requirementList.push(matchReq[1]);
+                }
+            }
+
+            if(JSON.stringify(actualCodeRequirements) != JSON.stringify(requirementList)) {
+                personnalKeywords = [];
+                for(let i of requirementList){
+                    $.ajax({
+                        url: 'api/codeextention/' + i, // API endpoint
+                        type: 'GET', // Méthode HTTP POST
+                        contentType: 'application/json; charset=UTF-8', // Type de contenu
+                        success: function(response) {
+                            personnalKeywords = personnalKeywords.concat(response.map(x => i + "." + x));
+                        },
+                        error: function(error) {
+                            console.error('Erreur lors du chargement de l\'extention ' + i + ' : ', error);
+                        }
+                    });
+                }
+                actualCodeRequirements = requirementList
             }
 
             // Restaurer la position de défilement
             editor.scrollTo(scrollInfo.left, scrollInfo.top);
         }, 400);
     </script>
+
+    <script>
+        $.ajax({
+            url: 'api/code/' + documentName, // API endpoint
+            type: 'GET', // HTTP method
+            dataType: 'text/plain', // Data type expected of the server response
+            success: function (response) {
+                console.log('GET Response:', response); // Logs response from server
+            },
+            error: function (error) {
+                console.error('GET Error:', error.responseText); // Logs any error
+                editor.setValue(error.responseText);
+            }
+        });
+    </script>
 }
 <div>
-    <h1 class="h1">Editor</h1>
-    <div id="editor" class=""></div>
-
+    <div class="d-flex">
+        <input class="h2 w-100 border-0" type="text" id="docName" />
+        <input id="executionButton" type="button" class="btn btn-success m-2" value="Executer" />
+    </div>
+    <div class="d-flex">
+        <div id="editor" class="w-100"></div>
+        <div id="infoPanel" class="info-panel">
+        </div>
+    </div>
 </div>

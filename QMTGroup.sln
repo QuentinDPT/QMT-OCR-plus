@@ -25,6 +25,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Camera.EmguCV", "Q
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Model", "Model", "{C752FCCF-3E5D-4CFC-8E48-26D289DD9B7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaOrchestrator", "LuaOrchestrator\LuaOrchestrator.csproj", "{2CBA4D5A-5215-4D5D-9697-39173569B134}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LuaOrchestrator.ResourceHub", "LuaOrchestrator.ResourceHub\LuaOrchestrator.ResourceHub.csproj", "{81972498-742F-4BAB-A3D2-F5970FB48DE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLocator", "ServiceLocator\ServiceLocator.csproj", "{88601707-54D3-40D6-8C83-0C2BF0DA7690}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Services", "QMTGroup.Services\QMTGroup.Services.csproj", "{087506E3-5A58-4748-90C7-FFD0363FFAF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Camera.Halcon", "QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj", "{F1966E2F-6368-443A-B239-BCD62563583E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +81,26 @@ Global
 		{A8221C3E-AEE0-4E0F-989A-C70885EC7E1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8221C3E-AEE0-4E0F-989A-C70885EC7E1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8221C3E-AEE0-4E0F-989A-C70885EC7E1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2CBA4D5A-5215-4D5D-9697-39173569B134}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CBA4D5A-5215-4D5D-9697-39173569B134}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CBA4D5A-5215-4D5D-9697-39173569B134}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CBA4D5A-5215-4D5D-9697-39173569B134}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81972498-742F-4BAB-A3D2-F5970FB48DE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81972498-742F-4BAB-A3D2-F5970FB48DE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81972498-742F-4BAB-A3D2-F5970FB48DE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81972498-742F-4BAB-A3D2-F5970FB48DE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88601707-54D3-40D6-8C83-0C2BF0DA7690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88601707-54D3-40D6-8C83-0C2BF0DA7690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88601707-54D3-40D6-8C83-0C2BF0DA7690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88601707-54D3-40D6-8C83-0C2BF0DA7690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{087506E3-5A58-4748-90C7-FFD0363FFAF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{087506E3-5A58-4748-90C7-FFD0363FFAF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{087506E3-5A58-4748-90C7-FFD0363FFAF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{087506E3-5A58-4748-90C7-FFD0363FFAF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1966E2F-6368-443A-B239-BCD62563583E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1966E2F-6368-443A-B239-BCD62563583E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1966E2F-6368-443A-B239-BCD62563583E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1966E2F-6368-443A-B239-BCD62563583E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +110,7 @@ Global
 		{26D6E4A4-7147-4870-A69C-3EF4523C27D0} = {C752FCCF-3E5D-4CFC-8E48-26D289DD9B7C}
 		{0144C6E8-46B9-49D0-B808-47C9682B5BAA} = {C752FCCF-3E5D-4CFC-8E48-26D289DD9B7C}
 		{A8221C3E-AEE0-4E0F-989A-C70885EC7E1F} = {C752FCCF-3E5D-4CFC-8E48-26D289DD9B7C}
+		{F1966E2F-6368-443A-B239-BCD62563583E} = {C752FCCF-3E5D-4CFC-8E48-26D289DD9B7C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {141C8BE7-C015-4F2B-9039-11EBC65593F6}

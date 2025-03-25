@@ -1,14 +1,12 @@
-﻿using Emgu.CV;
-using Emgu.CV.Structure;
-using QMTGroup.Models.ImageFilters;
+﻿using QMTGroup.Image;
 
-namespace QMTGroup.ImageFilters.Filters
+namespace QMTGroup.ImageFilters.Filters;
+
+public class ToGrayScales : IImageFilter
 {
-    public class ToGrayScales : IImageFilter
+    public Matrix ApplyFilter(Matrix input)
     {
-        public Mat ApplyFilter(Mat input)
-        {
-            return input.ToImage<Bgr, Byte>().Convert<Gray, byte>().Mat;
-        }
+        return input;
+        //return input.ToImage<Bgr, Byte>().Convert<Gray, byte>().Mat;
     }
 }

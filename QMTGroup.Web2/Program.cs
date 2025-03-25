@@ -1,3 +1,6 @@
+using QMTGroup.Camera;
+using QMTGroup.Web;
+using QMTGroup.Web.Service;
 using QMTGroup.Web2.Service;
 
 namespace QMTGroup.Web2
@@ -13,6 +16,15 @@ namespace QMTGroup.Web2
 
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<VideoStreamService>();
+            builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
+            builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
+            {
+                Slot = 0
+            });
+            builder.Services.AddSingleton<CodeStorageService>();
+
+            builder.Logging.ClearProviders(); // Désactive tous les loggers
+            builder.Logging.AddDebug(); // Active seulement les logs en mode debug
 
             var app = builder.Build();
 
@@ -39,6 +51,8 @@ namespace QMTGroup.Web2
             app.MapRazorPages();
 
             var videoService = app.Services.GetRequiredService<VideoStreamService>();
+            ServiceLocator.Service.Locator = app.Services;
+
             videoService.Start();
 
             app.Run();

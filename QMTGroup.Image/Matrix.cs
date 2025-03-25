@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-
-namespace QMTGroup.Image;
+﻿namespace QMTGroup.Image;
 
 public record Matrix
 {

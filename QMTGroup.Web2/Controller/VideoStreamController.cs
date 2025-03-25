@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using LuaOrchestrator;
 using Microsoft.AspNetCore.Mvc;
-using QMTGroup.ImageFilters.Filters;
+using QMTGroup.Image;
 using QMTGroup.Web2.Service;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace QMTGroup.Web2.Controller
 {
@@ -16,11 +19,14 @@ namespace QMTGroup.Web2.Controller
             _videoStreamService = videoStreamService;
         }
 
-        [HttpGet("apply")]
-        public IActionResult ee()
+        [HttpGet("{id}")]
+        public IActionResult ee(string id)
         {
-            return Ok();
+            var image = QMT.Bank[id] as Matrix;
+            return File(ConvertMatToBase64(image), "image/jpeg");
         }
+
+        private byte[] ConvertMatToBase64(Matrix mat) => Convert.ToBase64String(mat.Data).Select(x => (byte)x).ToArray();
 
         [HttpGet("apply/{filterId}")]
         public IActionResult ApplyFilter(int filterId, [FromQuery] string? parameter1 = null, [FromQuery] string? parameter2 = null)
@@ -31,7 +37,7 @@ namespace QMTGroup.Web2.Controller
                     _videoStreamService.ImageFilter = null;
                     return Ok();
                 case 1:
-                    _videoStreamService.ImageFilter = new ToGrayScales();
+                    //_videoStreamService.ImageFilter = new ToGrayScales();
                     return Ok();
                 case 2:
                     if (int.TryParse(parameter1, out int size))
@@ -40,11 +46,11 @@ namespace QMTGroup.Web2.Controller
                         if (!float.TryParse(parameter2, out sigma))
                             sigma = 1.5f;
 
-                        _videoStreamService.ImageFilter = new ConvolutionGauss(size, sigma);
+                        //_videoStreamService.ImageFilter = new ConvolutionGauss(size, sigma);
                     }
                     else
                     {
-                        _videoStreamService.ImageFilter = new ConvolutionGauss();
+                        //_videoStreamService.ImageFilter = new ConvolutionGauss();
                     }
 
                     return Ok();

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.IO\QMTGroup.IO.csproj" />
+	  <ProjectReference Include="..\QMTGroup.Models\QMTGroup.Models.csproj" />
+	  <ProjectReference Include="..\QMTGroup.Web2\QMTGroup.Web.csproj" />
+  </ItemGroup>
+
+</Project>

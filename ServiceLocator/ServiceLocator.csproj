@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
-  </ItemGroup>
-
 </Project>
