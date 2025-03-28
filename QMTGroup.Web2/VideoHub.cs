@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace QMTGroup.Web2
+namespace QMTGroup.Web
 {
     public class VideoHub : Hub
     {

@@ -2,9 +2,9 @@
 using Emgu.CV;
 using Microsoft.AspNetCore.Mvc;
 using QMTGroup.Image;
-using QMTGroup.Web2.Service;
+using QMTGroup.Web.Service;
 
-namespace QMTGroup.Web2.Controller
+namespace QMTGroup.Web.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -53,45 +53,37 @@ namespace QMTGroup.Web2.Controller
         public async Task<IActionResult> MjpegStream()
         {
             Response.ContentType = "multipart/x-mixed-replace; boundary=frame";
-            Matrix img = new();
+            Matrix? img = new();
+            byte[] imageBytes;
+            Mat er;
 
             // Diffuser les images reçues par l'événement ImageCaptured
             while (true)
             {
                 // Attendre que de nouvelles images arrivent
                 _videoStreamService.ImageHasChanged.WaitOne();
-                var nimg = _videoStreamService.LastImage;
+                img = _videoStreamService.LastImage;
                 _videoStreamService.ImageHasChanged.Reset();
 
-                if (nimg is not null && nimg != img)
+                if (img is null) continue;
+
+                er = img.ToMat();
+
+                if (img.Channels == 1)
                 {
-                    img = nimg;
-
-
-                    // Convertir Mat en Image<Bgr, byte>
-                    var er = img.ToMat();
-
-                    // Encoder en JPEG
-                    byte[] imageBytes;
-
-                    if (img.Channels == 1)
-                    {
-                        var image = er.ToImage<Gray, byte>();
-                        imageBytes = image.ToJpegData();
-                    }
-                    else
-                    {
-                        Image<Bgr, byte> image = er.ToImage<Bgr, byte>();
-                        imageBytes = image.ToJpegData();
-                    }
-
-
-                    // Envoi de l'image dans le format MJPEG
-                    await Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {_videoStreamService.LastImage.Data.Length}\r\n\r\n"));
-                    await Response.Body.WriteAsync(imageBytes);
-                    await Response.Body.WriteAsync([13, 10], 0, 2);
-                    await Response.Body.FlushAsync();
+                    imageBytes = er.ToImage<Gray, byte>().ToJpegData(95);
                 }
+                else
+                {
+                    imageBytes = er.ToImage<Bgr, byte>().ToJpegData(95);
+                }
+
+
+                // Envoi de l'image dans le format MJPEG
+                await Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {_videoStreamService.LastImage.Data.Length}\r\n\r\n"));
+                await Response.Body.WriteAsync(imageBytes);
+                await Response.Body.WriteAsync([13, 10], 0, 2);
+                await Response.Body.FlushAsync();
             }
         }
 

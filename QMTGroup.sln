@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Services", "QMTGro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Camera.Halcon", "QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj", "{F1966E2F-6368-443A-B239-BCD62563583E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject1", "TestProject1\TestProject1.csproj", "{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,14 @@ Global
 		{F1966E2F-6368-443A-B239-BCD62563583E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F1966E2F-6368-443A-B239-BCD62563583E}.Release|x64.ActiveCfg = Release|x64
 		{F1966E2F-6368-443A-B239-BCD62563583E}.Release|x64.Build.0 = Release|x64
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Debug|x64.Build.0 = Debug|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Release|x64.ActiveCfg = Release|Any CPU
+		{3D4577B8-9B53-4BC4-B425-92EBF9DA35B6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,7 @@ using QMTGroup.Camera;
 using QMTGroup.Image;
 using QMTGroup.ImageFilters;
 
-namespace QMTGroup.Web2.Service;
+namespace QMTGroup.Web.Service;
 
 public class VideoStreamService
 {

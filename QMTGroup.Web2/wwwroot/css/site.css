@@ -18,5 +18,14 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    min-height: 100vh;
+    margin: 0;
+    padding-bottom: 85px;
+}
+
+footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    margin-bottom: 60px;
 }

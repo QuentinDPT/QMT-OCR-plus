@@ -8,9 +8,9 @@ public record Matrix
     public byte[] Data
     {
         get => _data;
-        init => _data = value;
+        set => _data = value;
     }
-    private byte[] _data;
+    private byte[] _data = [];
 
     /// <summary>
     /// Number of channels in the image.<br/>
@@ -19,7 +19,7 @@ public record Matrix
     public uint Channels
     {
         get => _channels;
-        init => _channels = value;
+        set => _channels = value;
     }
     private uint _channels = 1;
 
@@ -29,7 +29,7 @@ public record Matrix
     public Type ChannelType
     {
         get => _channelType;
-        init => _channelType = value;
+        set => _channelType = value;
     }
     private Type _channelType;
 
@@ -39,7 +39,7 @@ public record Matrix
     public uint Width
     {
         get => _width;
-        init => _width = value;
+        set => _width = value;
     }
     private uint _width;
 
@@ -49,7 +49,7 @@ public record Matrix
     public uint Height
     {
         get => _height;
-        init => _height = value;
+        set => _height = value;
     }
     private uint _height;
 }

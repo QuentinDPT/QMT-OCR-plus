@@ -1,22 +1,25 @@
 using QMTGroup.Camera;
-using QMTGroup.Web;
 using QMTGroup.Web.Service;
-using QMTGroup.Web2.Service;
+using System.Runtime;
 
-namespace QMTGroup.Web2
+namespace QMTGroup.Web
 {
     public class Program
     {
         public static void Main(string[] args)
         {
+            GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+
+
             var builder = WebApplication.CreateBuilder(args);
+            builder.WebHost.UseUrls(["https://localhost:7083", "http://localhost:5062", "https://0.0.0.0:7083", "http://0.0.0.0:5062"]);
 
             // Add services to the container.
             builder.Services.AddRazorPages();
 
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<VideoStreamService>();
-            builder.Services.AddSingleton<ICamera, Camera.Halcon.Camera>();
+            builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
             builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
             {
                 Slot = 0

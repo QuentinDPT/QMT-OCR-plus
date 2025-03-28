@@ -3,7 +3,62 @@
 @{
     ViewData["Title"] = "Home page";
 }
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="" />
+    <style>
+        .leaflet-container {
+            background-color: white !important;
+        }
+    </style>
+}
 @section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="">
+    </script>
+
+    <script>
+        var imgWidth = 640;  // Largeur de l'image en pixels
+        var imgHeight = 480; // Hauteur de l'image en pixels
+        var imgUrl = "/mjpeg-stream"; // Remplace par ton flux MJPEG
+
+        // Convertir la taille de l'image en coordonnées Leaflet
+        var pixelToLatLng = 0.0005; // Ajuste ce facteur si nécessaire
+        var halfWidth = (imgWidth / 2) * pixelToLatLng;
+        var halfHeight = (imgHeight / 2) * pixelToLatLng;
+
+        // Définir les limites de la carte en fonction de l'image
+        var bounds = [
+            [-halfHeight, -halfWidth], // Coin bas-gauche
+            [halfHeight, halfWidth]    // Coin haut-droit
+        ];
+
+        // Initialiser la carte
+        var map = L.map('map', {
+            center: [0, 0], // Centre exact en (0,0)
+            zoom: 12, // Zoom de départ
+            minZoom: 11, // Zoom minimum autorisé
+            maxZoom: 15, // Zoom maximum
+            maxBounds: bounds, // Empêche l'utilisateur de sortir
+            maxBoundsViscosity: .9, // Force la carte à rester dans les limites
+            zoomControl: false
+        });
+
+        map.attributionControl.setPrefix(false);
+        map.removeControl(map.attributionControl);
+
+        var imageOverlay = {};
+        window.addEventListener("load", function(e){
+            // Ajouter l'image MJPEG en tant qu'overlay
+            imageOverlay = L.imageOverlay(imgUrl, bounds).addTo(map);
+        });
+
+        // Ajuster la vue pour afficher toute l'image
+        map.fitBounds(bounds);
+    </script>
+
     @* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script> *@
 
 @*<!-- BASE64 STREAM -->
@@ -23,6 +78,7 @@
         connection.start().catch(err => console.error(err));
     </script>
  *@
+
     <script>
         document.getElementById("STD").onclick = function(e){
             $.ajax({
@@ -119,11 +175,6 @@
     <script>
         let cameraStarted = false;
 
-        window.addEventListener("load", function(e)
-        {
-            document.getElementById("SW").src = "/mjpeg-stream";
-        });
-
         document.getElementById("ONOFF").onclick = function(e){
 
             document.getElementById("ONOFF").disabled = true;
@@ -133,7 +184,7 @@
                     type: 'POST',
                     success: function(){
                         cameraStarted = false;
-                        document.getElementById("SW").src = "";
+                        imageOverlay.setOpacity(0);
                         document.getElementById("ONOFF").disabled = false;
                         document.getElementById("ONOFF").className = "btn btn-primary mb-1 w-100 text-start";
                         document.getElementById("ONOFF").innerHTML = "Démarrer";
@@ -148,7 +199,7 @@
                     type: 'POST',
                     success: function(){
                         cameraStarted = true;
-                        document.getElementById("SW").src = "/mjpeg-stream";
+                        imageOverlay.setOpacity(1);
                         document.getElementById("ONOFF").disabled = false;
                         document.getElementById("ONOFF").className = "btn btn-danger mb-1 w-100 text-start";
                         document.getElementById("ONOFF").innerHTML = "Stop";
@@ -161,7 +212,7 @@
         };
     </script>
 
-    <!-- FPS -->
+    @* <!-- FPS -->
     <script>
         let fpsCounter = document.getElementById("LastFrame");
         let img = document.getElementById("SW");
@@ -180,47 +231,50 @@
         img.onload = function () {
             frameCount++;
         };
-    </script>
+    </script> *@
 }
 
-<div class="d-flex">
-    <div class="p-2">
-        <h1>Flux Vidéo</h1>
-        <div style="width:640px;height:480px">
-            <img id="SW" width="100%" height="100%" alt="Flux en direct" />
+<div class="container-xxl">
+    <div class="row">
+        <div class="col-12 col-lg-9">
+            <h1>Flux Vidéo</h1>
+            <div class="w-100" style="aspect-ratio: 640/480;">
+                <div id="map" style="width:100%;height:100%"></div>
+            </div>
+            <p><span id="LastFrame"></span> fps</p>
         </div>
-        <p><span id="LastFrame"></span> fps</p>
+        <div class="col-12 col-lg-3">
+            <div class="d-flex flex-column">
+                <h1>Filtres</h1>
+                <table>
+                    <thead></thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button id="ONOFF" class="btn btn-primary mb-1 w-100 text-start">Démarrer/Arreter</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="STD" class="btn btn-outline-secondary mb-1 w-100 text-start">Source</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button id="MD1" class="btn btn-outline-secondary mb-1 w-100 text-start">Nuances de gris</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="d-flex">
+                                <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
+                                <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <div class="d-flex flex-column w-100 p-2">
-        <h1>Filtres</h1>
-        <table>
-            <thead></thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <button id="ONOFF" class="btn btn-primary mb-1 w-100 text-start">Démarrer/Arreter</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button id="STD" class="btn btn-outline-secondary mb-1 w-100 text-start">Source</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <button id="MD1" class="btn btn-outline-secondary mb-1 w-100 text-start">Nuances de gris</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="d-flex">
-                        <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
-                        <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
     <div id="paramModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
