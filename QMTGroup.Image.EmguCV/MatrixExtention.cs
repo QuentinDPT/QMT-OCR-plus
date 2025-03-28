@@ -87,7 +87,7 @@ public static class MatrixExtention
             throw new TypeLoadException("Unsupported type.");
         }
 
-        Mat mat = new Mat((int)self.Width, (int)self.Height, depthType, (int)self.Channels);
+        Mat mat = new Mat((int)self.Height, (int)self.Width, depthType, (int)self.Channels);
 
         System.Runtime.InteropServices.Marshal.Copy(self.Data, 0, mat.DataPointer, self.Data.Length);
 

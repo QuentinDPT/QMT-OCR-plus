@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
 	<ItemGroup>
@@ -26,6 +27,5 @@
 		<ProjectReference Include="..\QMTGroup.Camera\QMTGroup.Camera.csproj" />
 		<ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
 		<ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
-		<ProjectReference Include="..\ServiceLocator\ServiceLocator.csproj" />
 	</ItemGroup>
 </Project>

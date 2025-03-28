@@ -21,7 +21,7 @@ public record Matrix
         get => _channels;
         init => _channels = value;
     }
-    private uint _channels;
+    private uint _channels = 1;
 
     /// <summary>
     /// Type of all channels.

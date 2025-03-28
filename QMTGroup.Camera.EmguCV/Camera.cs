@@ -1,7 +1,5 @@
 ﻿using Emgu.CV;
 using QMTGroup.Image;
-using System.Runtime.CompilerServices;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace QMTGroup.Camera.EmguCV;
 
@@ -9,7 +7,7 @@ public class Camera : ICamera
 {
     private Mat _imageRecived;
 
-    private VideoCapture _videoCapture;
+    private VideoCapture? _videoCapture = null;
 
     public event EventHandler<Matrix> OnReciveImage;
 
@@ -22,6 +20,9 @@ public class Camera : ICamera
 
     public void StartCapture()
     {
+        if (_videoCapture is not null)
+            return;
+        
         _imageRecived = new Mat();
         _videoCapture = new VideoCapture(_cameraParameters.Slot);
 
@@ -36,6 +37,18 @@ public class Camera : ICamera
 
     public void StopCapture()
     {
+        if (_videoCapture is null)
+            return;
+
         _videoCapture.Stop();
+        try
+        {
+            _videoCapture.Dispose();
+        }
+        catch (Exception)
+        {
+            _videoCapture.Dispose();
+        }
+        _videoCapture = null;
     }
 }
