@@ -50,7 +50,7 @@ namespace QMTGroup.Web.Controller
         }
 
         [HttpGet("/mjpeg-stream")]
-        public async Task<IActionResult> MjpegStream()
+        public async Task<IActionResult> MjpegStream([FromQuery] Guid cameraInstance)
         {
             Response.ContentType = "multipart/x-mixed-replace; boundary=frame";
             Matrix? img = new();
@@ -88,11 +88,11 @@ namespace QMTGroup.Web.Controller
         }
 
         [HttpPost("start")]
-        public IActionResult StartCamera()
+        public IActionResult StartCamera([FromQuery] Guid cameraInstance)
         {
             try
             {
-                _videoStreamService.Start();
+                _videoStreamService.Start(cameraInstance);
             }catch(Exception ex)
             {
                 _logger.LogError(ex, "Something went wrong with the camera start.");
@@ -103,11 +103,11 @@ namespace QMTGroup.Web.Controller
 
 
         [HttpPost("stop")]
-        public IActionResult StopCamera()
+        public IActionResult StopCamera([FromQuery] Guid cameraInstance)
         {
             try
             {
-                _videoStreamService.Stop();
+                _videoStreamService.Stop(cameraInstance);
             }
             catch (Exception ex)
             {
@@ -115,6 +115,12 @@ namespace QMTGroup.Web.Controller
                 return Problem("Something went wrong with the camera stop.");
             }
             return Ok();
+        }
+
+        [HttpGet("allCamera")]
+        public IActionResult AllCamera()
+        {
+            return new JsonResult(_videoStreamService.GetAllCamera());
         }
     }
 }

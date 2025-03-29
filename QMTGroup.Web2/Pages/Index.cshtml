@@ -174,13 +174,14 @@
     <!-- STREAM MANAGEMENT -->
     <script>
         let cameraStarted = false;
+        var guid = "bda3b6e6-45eb-4c6d-b1a4-82dccdc88fe7";
 
         document.getElementById("ONOFF").onclick = function(e){
 
             document.getElementById("ONOFF").disabled = true;
             if(cameraStarted){
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/stop",
+                    url: "https://localhost:7083/api/videoStream/stop?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = false;
@@ -195,7 +196,7 @@
                 });
             }else{
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/start",
+                    url: "https://localhost:7083/api/videoStream/start?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = true;

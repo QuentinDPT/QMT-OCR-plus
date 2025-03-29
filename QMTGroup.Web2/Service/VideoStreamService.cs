@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using QMTGroup.Camera;
 using QMTGroup.Image;
 using QMTGroup.ImageFilters;
+using QMTGroup.Web.Factory;
 
 namespace QMTGroup.Web.Service;
 
 public class VideoStreamService
 {
-    private readonly IHubContext<VideoHub> _hubContext;
-    private readonly ICamera _camera;
+    private readonly ICameraFactory _cameraFactory;
     
     public IImageFilter? ImageFilter
     {
@@ -18,16 +19,19 @@ public class VideoStreamService
 
     private IImageFilter? _imageFilter = null;
 
-    public VideoStreamService(IHubContext<VideoHub> hubContext, ICamera camera)
+    public VideoStreamService(ICameraFactory cameraFactory)
     {
-        _hubContext = hubContext;
-        _camera = camera;
+        _cameraFactory = cameraFactory;
     }
 
-    public void Start()
+    public void Start(Guid cameraInstance)
     {
-        _camera.OnReciveImage += _camera_OnReciveImage_mjpeg;
-        _camera.StartCapture();
+        var camera = _cameraFactory.Get<ICamera>(cameraInstance);
+        if (camera is null)
+            return;
+
+        camera.OnReciveImage += _camera_OnReciveImage_mjpeg;
+        camera.StartCapture();
     }
 
     public ManualResetEvent ImageHasChanged = new ManualResetEvent(false);
@@ -40,8 +44,17 @@ public class VideoStreamService
         ImageHasChanged.Set();
     }
 
-    public void Stop()
+    public void Stop(Guid cameraInstance)
     {
-        _camera.StopCapture();
+        var camera = _cameraFactory.Get<ICamera>(cameraInstance);
+        if (camera is null)
+            return;
+
+        camera.StopCapture();
+    }
+
+    internal Dictionary<Guid, string> GetAllCamera()
+    {
+        return _cameraFactory.ToDictionary(x => x.Key, x => x.Value.GetType().FullName ?? x.Value.GetType().Name);
     }
 }

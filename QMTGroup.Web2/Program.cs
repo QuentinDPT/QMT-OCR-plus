@@ -1,4 +1,5 @@
 using QMTGroup.Camera;
+using QMTGroup.Web.Factory;
 using QMTGroup.Web.Service;
 using System.Runtime;
 
@@ -19,11 +20,12 @@ namespace QMTGroup.Web
 
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<VideoStreamService>();
-            builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
-            builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
-            {
-                Slot = 0
-            });
+            builder.Services.AddSingleton<ICameraFactory, CameraFactory>();
+            //builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
+            //builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
+            //{
+            //    Slot = 0
+            //});
             builder.Services.AddSingleton<CodeStorageService>();
 
             builder.Logging.ClearProviders(); // Désactive tous les loggers
@@ -53,6 +55,16 @@ namespace QMTGroup.Web
             app.UseAuthorization();
 
             app.MapRazorPages();
+
+            var cameraFactory = app.Services.GetService<ICameraFactory>();
+            if (cameraFactory is null)
+                throw new NullReferenceException(nameof(cameraFactory));
+
+            cameraFactory.Create<Camera.EmguCV.Camera>(new Camera.EmguCV.CameraParameters()
+            {
+                Slot = 0
+            });
+            cameraFactory.Create<Camera.Halcon.Camera>(null);
 
             app.Run();
         }
