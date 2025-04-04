@@ -35,13 +35,10 @@ public static class MatrixExtention
                 throw new TypeLoadException("Unsupported type.");
         }
 
-        return new Matrix()
+        return new Matrix(mat.Width, mat.Height, mat.NumberOfChannels)
         {
             Data = mat.GetRawData(),
-            Channels = (uint)mat.NumberOfChannels,
             ChannelType = ChannelType,
-            Width = (uint)mat.Width,
-            Height = (uint)mat.Height
         };
     }
 

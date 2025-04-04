@@ -56,9 +56,15 @@ namespace QMTGroup.Web.Controller
             Matrix? img = new();
             byte[] imageBytes;
             Mat er;
+            _videoStreamService.ImageHasChanged.WaitOne();
+            img = _videoStreamService.LastImage;
+            _videoStreamService.ImageHasChanged.Reset();
+            if (img is null)
+                return new EmptyResult();
+            var imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n");
 
             // Diffuser les images reçues par l'événement ImageCaptured
-            while (true)
+            while (!HttpContext.RequestAborted.IsCancellationRequested)
             {
                 // Attendre que de nouvelles images arrivent
                 _videoStreamService.ImageHasChanged.WaitOne();
@@ -80,11 +86,12 @@ namespace QMTGroup.Web.Controller
 
 
                 // Envoi de l'image dans le format MJPEG
-                await Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {_videoStreamService.LastImage.Data.Length}\r\n\r\n"));
+                await Response.Body.WriteAsync(imageDataHeader);
                 await Response.Body.WriteAsync(imageBytes);
                 await Response.Body.WriteAsync([13, 10], 0, 2);
                 await Response.Body.FlushAsync();
             }
+            return new EmptyResult();
         }
 
         [HttpPost("start")]

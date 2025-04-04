@@ -1,7 +1,48 @@
-﻿namespace QMTGroup.Image;
+﻿using System.Buffers;
 
-public record Matrix
+namespace QMTGroup.Image;
+
+public record Matrix : IDisposable
 {
+    private ArrayPool<byte> _memoryPool = ArrayPool<byte>.Shared;
+
+    public Matrix()
+    {
+        _data = _memoryPool.Rent(1);
+    }
+
+    public Matrix(int imageSize)
+    {
+        _data = _memoryPool.Rent(imageSize);
+    }
+
+    public Matrix(int width, int height, int channels = 1)
+    {
+        Width = (uint)width;
+        Height = (uint)height;
+        Channels = (uint)channels;
+
+        _data = _memoryPool.Rent(width * height * channels);
+    }
+
+    public Matrix(ArrayPool<byte> memoryPool)
+    {
+        _memoryPool = memoryPool;
+        _data = _memoryPool.Rent(1);
+    }
+
+    public Matrix(ArrayPool<byte> memoryPool, int imageSize)
+    {
+        _memoryPool = memoryPool;
+        _data = _memoryPool.Rent(imageSize);
+    }
+
+    public Matrix(ArrayPool<byte> memoryPool, int width, int height, int channels = 1)
+    {
+        _memoryPool = memoryPool;
+        _data = _memoryPool.Rent(width * height * channels);
+    }
+
     /// <summary>
     /// Raw data of the image.
     /// </summary>
@@ -10,7 +51,7 @@ public record Matrix
         get => _data;
         set => _data = value;
     }
-    private byte[] _data = [];
+    private byte[] _data;
 
     /// <summary>
     /// Number of channels in the image.<br/>
@@ -52,4 +93,9 @@ public record Matrix
         set => _height = value;
     }
     private uint _height;
+
+    public void Dispose()
+    {
+        ArrayPool<byte>.Shared.Return(_data);
+    }
 }

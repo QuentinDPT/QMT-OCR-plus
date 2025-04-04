@@ -56,7 +56,7 @@ public class Camera : ICamera
         _cancellationToken = new();
     }
 
-    private async Task _capturePeriodically(CancellationToken tocken)
+    private void _capturePeriodically(CancellationToken tocken)
     {
         try
         {
@@ -82,7 +82,7 @@ public class Camera : ICamera
 
     public void _captureV2()
     {
-        _obj.Dispose();
+        _obj?.Dispose();
         HOperatorSet.GrabImageAsync(out _obj, _camera, tupleNeg);
 
         if (_obj == null || !_obj.IsInitialized())
