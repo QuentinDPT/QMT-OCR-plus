@@ -35,11 +35,13 @@ public static class MatrixExtention
                 throw new TypeLoadException("Unsupported type.");
         }
 
-        return new Matrix(mat.Width, mat.Height, mat.NumberOfChannels)
+        var matrix = new Matrix(mat.Width, mat.Height, mat.NumberOfChannels)
         {
-            Data = mat.GetRawData(),
             ChannelType = ChannelType,
         };
+        matrix.SetData(mat.GetRawData());
+
+        return matrix;
     }
 
     public static Matrix ToMatrix(this Mat self)
@@ -86,7 +88,8 @@ public static class MatrixExtention
 
         Mat mat = new Mat((int)self.Height, (int)self.Width, depthType, (int)self.Channels);
 
-        System.Runtime.InteropServices.Marshal.Copy(self.Data, 0, mat.DataPointer, self.Data.Length);
+        throw new NotImplementedException();
+        //System.Runtime.InteropServices.Marshal.Copy(self.Data, 0, mat.DataPointer, self.Data.Length);
 
         return mat;
     }

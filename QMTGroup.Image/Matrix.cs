@@ -1,4 +1,6 @@
 ﻿using System.Buffers;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace QMTGroup.Image;
 
@@ -8,12 +10,14 @@ public record Matrix : IDisposable
 
     public Matrix()
     {
-        _data = _memoryPool.Rent(1);
+        _dataLength = 1;
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     public Matrix(int imageSize)
     {
-        _data = _memoryPool.Rent(imageSize);
+        _dataLength = imageSize;
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     public Matrix(int width, int height, int channels = 1)
@@ -22,36 +26,41 @@ public record Matrix : IDisposable
         Height = (uint)height;
         Channels = (uint)channels;
 
-        _data = _memoryPool.Rent(width * height * channels);
+        _dataLength = width * height * channels;
+
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     public Matrix(ArrayPool<byte> memoryPool)
     {
         _memoryPool = memoryPool;
-        _data = _memoryPool.Rent(1);
+        _dataLength = 1;
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     public Matrix(ArrayPool<byte> memoryPool, int imageSize)
     {
         _memoryPool = memoryPool;
-        _data = _memoryPool.Rent(imageSize);
+        _dataLength = imageSize;
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     public Matrix(ArrayPool<byte> memoryPool, int width, int height, int channels = 1)
     {
         _memoryPool = memoryPool;
-        _data = _memoryPool.Rent(width * height * channels);
+        _dataLength = width * height * channels;
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
     }
 
     /// <summary>
     /// Raw data of the image.
     /// </summary>
-    public byte[] Data
+    public Span<byte> Data
     {
-        get => _data;
-        set => _data = value;
+        get => new Span<byte>(_innerDataSpace, 0, _dataLength);
     }
-    private byte[] _data;
+    private byte[] _innerDataSpace;
+    private int _dataLength = 0;
 
     /// <summary>
     /// Number of channels in the image.<br/>
@@ -94,8 +103,21 @@ public record Matrix : IDisposable
     }
     private uint _height;
 
+    public void SetDataSize(int size)
+    {
+        _dataLength = size;
+        _memoryPool.Return(_innerDataSpace);
+        _innerDataSpace = _memoryPool.Rent(_dataLength);
+    }
+
+    public void SetData(byte[] data) => Buffer.BlockCopy(data, 0, _innerDataSpace, 0, _dataLength);
+
+    public void SetData(nint data) => Marshal.Copy(data, _innerDataSpace, 0, _dataLength);
+
+    public void SetData(Span<byte> data) => data.CopyTo(_innerDataSpace);
+
     public void Dispose()
     {
-        ArrayPool<byte>.Shared.Return(_data);
+        _memoryPool.Return(_innerDataSpace);
     }
 }

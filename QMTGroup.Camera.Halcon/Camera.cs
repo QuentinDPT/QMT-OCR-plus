@@ -146,12 +146,13 @@ public class Camera : ICamera
 
         if(requiredImageSize != matrix.Data.Length)
         {
-            matrix.Data = new byte[requiredImageSize];
+            matrix.SetDataSize(requiredImageSize);
+            matrix.SetData(matrix.Data);
             matrix.Width = (uint)ht_width.I;
             matrix.Height = (uint)ht_height.I;
             matrix.ChannelType = typeof(byte);
         }
 
-        Marshal.Copy(hv_ptrImage, matrix.Data, 0, requiredImageSize);
+        matrix.SetData(hv_ptrImage);
     }
 }

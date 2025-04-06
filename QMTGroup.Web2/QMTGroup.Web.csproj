@@ -25,6 +25,8 @@
 		<ProjectReference Include="..\QMTGroup.Camera.EmguCV\QMTGroup.Camera.EmguCV.csproj" />
 		<ProjectReference Include="..\QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj" />
 		<ProjectReference Include="..\QMTGroup.Camera\QMTGroup.Camera.csproj" />
+		<ProjectReference Include="..\QMTGroup.Image.EmguCV\QMTGroup.Image.EmguCV.csproj" />
+		<ProjectReference Include="..\QMTGroup.Image.FFMPEG\QMTGroup.Image.FFMPEG.csproj" />
 		<ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
 		<ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
 	</ItemGroup>

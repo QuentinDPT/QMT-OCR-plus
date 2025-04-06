@@ -1,4 +1,5 @@
 using QMTGroup.Camera;
+using QMTGroup.Image.Interface;
 using QMTGroup.Web.Factory;
 using QMTGroup.Web.Service;
 using System.Runtime;
@@ -21,6 +22,7 @@ namespace QMTGroup.Web
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<VideoStreamService>();
             builder.Services.AddSingleton<ICameraFactory, CameraFactory>();
+            builder.Services.AddSingleton<IJpegConverter, Image.FFMPEG.CodecConverter>();
             //builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
             //builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
             //{

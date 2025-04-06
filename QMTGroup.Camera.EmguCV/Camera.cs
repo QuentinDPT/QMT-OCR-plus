@@ -28,8 +28,15 @@ public class Camera : ICamera
 
         _videoCapture.ImageGrabbed += (object sender, EventArgs e) =>
         {
-            _videoCapture.Retrieve(_imageRecived);
-            OnReciveImage.Invoke(this, _imageRecived.ToMatrix());
+            try
+            {
+                _videoCapture.Retrieve(_imageRecived);
+                OnReciveImage.Invoke(this, _imageRecived.ToMatrix());
+            }
+            catch (Exception)
+            {
+                _internalDispose();
+            }
         };
 
         _videoCapture.Start();
@@ -37,6 +44,24 @@ public class Camera : ICamera
 
     public void StopCapture()
     {
+        if (_videoCapture is null)
+            return;
+
+        _videoCapture.Stop();
+        try
+        {
+            _videoCapture.Dispose();
+        }
+        catch (Exception)
+        {
+            _videoCapture.Dispose();
+        }
+        _videoCapture = null;
+    }
+
+    private void _internalDispose()
+    {
+
         if (_videoCapture is null)
             return;
 
