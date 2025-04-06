@@ -93,5 +93,49 @@ public static class MatrixExtention
 
         return new Mat(new Size((int)self.Height, (int)self.Width), depthType, (int)self.Channels, self.GetDataPtr(), 1);
     }
+
+    public static Mat ToMatCopy(this Matrix self)
+    {
+        DepthType depthType;
+
+        if (self.ChannelType == typeof(byte))
+        {
+            depthType = DepthType.Cv8U;
+        }
+        else if (self.ChannelType == typeof(sbyte))
+        {
+            depthType = DepthType.Cv8S;
+        }
+        else if (self.ChannelType == typeof(ushort))
+        {
+            depthType = DepthType.Cv16U;
+        }
+        else if (self.ChannelType == typeof(short))
+        {
+            depthType = DepthType.Cv16S;
+        }
+        else if (self.ChannelType == typeof(int))
+        {
+            depthType = DepthType.Cv32S;
+        }
+        else if (self.ChannelType == typeof(float))
+        {
+            depthType = DepthType.Cv32F;
+        }
+        else if (self.ChannelType == typeof(double))
+        {
+            depthType = DepthType.Cv64F;
+        }
+        else
+        {
+            throw new TypeLoadException("Unsupported type.");
+        }
+
+        Mat result = new Mat((int)self.Height, (int)self.Width, depthType, (int)self.Channels);
+
+        result.SetTo(self.Data.ToArray());
+
+        return result;
+    }
 }
 

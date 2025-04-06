@@ -10,7 +10,7 @@ namespace QMTGroup.Image.EmguCV
         {
             try
             {
-                Mat emguMatrix = image.ToMat();
+                Mat emguMatrix = image.ToMatCopy();
 
                 if (image.Channels == 1)
                     return emguMatrix.ToImage<Gray, byte>().ToJpegData(quality);
