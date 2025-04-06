@@ -1,4 +1,5 @@
-﻿using System.Buffers;
+﻿using System;
+using System.Buffers;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
@@ -115,6 +116,19 @@ public record Matrix : IDisposable
     public void SetData(nint data) => Marshal.Copy(data, _innerDataSpace, 0, _dataLength);
 
     public void SetData(Span<byte> data) => data.CopyTo(_innerDataSpace);
+
+    public IntPtr GetDataPtr()
+    {
+        IntPtr ptr;
+        unsafe
+        {
+            fixed (byte* pData = Data)
+            {
+                ptr = (IntPtr)pData;
+            }
+        }
+        return ptr;
+    }
 
     public void Dispose()
     {

@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using System.Drawing;
 
 namespace QMTGroup.Image;
 
@@ -86,12 +87,11 @@ public static class MatrixExtention
             throw new TypeLoadException("Unsupported type.");
         }
 
-        Mat mat = new Mat((int)self.Height, (int)self.Width, depthType, (int)self.Channels);
+        //return new Mat([(int)self.Height, (int)self.Width, (int)self.Channels], depthType, self.GetDataPtr());
 
-        throw new NotImplementedException();
-        //System.Runtime.InteropServices.Marshal.Copy(self.Data, 0, mat.DataPointer, self.Data.Length);
+        return new Mat(new Size((int)self.Height, (int)self.Width), depthType, (int)self.Channels, self.GetDataPtr(), (int)self.Width * (int)self.Channels);
 
-        return mat;
+        return new Mat(new Size((int)self.Height, (int)self.Width), depthType, (int)self.Channels, self.GetDataPtr(), 1);
     }
 }
 

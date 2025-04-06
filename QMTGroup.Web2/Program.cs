@@ -22,7 +22,7 @@ namespace QMTGroup.Web
             builder.Services.AddSignalR();
             builder.Services.AddSingleton<VideoStreamService>();
             builder.Services.AddSingleton<ICameraFactory, CameraFactory>();
-            builder.Services.AddSingleton<IJpegConverter, Image.FFMPEG.CodecConverter>();
+            builder.Services.AddSingleton<IJpegConverter, Image.EmguCV.CodecConverter>();
             //builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
             //builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
             //{

@@ -74,6 +74,10 @@ namespace QMTGroup.Web.Controller
 
                 if(_videoStreamService.LastImage.Data.Length != img.Data.Length)
                 {
+                    img.Width = _videoStreamService.LastImage.Width;
+                    img.Height = _videoStreamService.LastImage.Height;
+                    img.Channels = _videoStreamService.LastImage.Channels;
+                    img.ChannelType = _videoStreamService.LastImage.ChannelType;
                     img.SetDataSize(_videoStreamService.LastImage.Data.Length);
                     imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n");
                 }
@@ -81,9 +85,11 @@ namespace QMTGroup.Web.Controller
 
                 _videoStreamService.ImageHasChanged.Reset();
 
+                var jpegData = _jpegConverter.ConvertToJpeg(img);
+
                 // Envoi de l'image dans le format MJPEG
                 await Response.Body.WriteAsync(imageDataHeader);
-                await Response.Body.WriteAsync(_jpegConverter.ConvertToJpeg(img, 1));
+                await Response.Body.WriteAsync(jpegData);
                 await Response.Body.WriteAsync([13, 10], 0, 2);
                 await Response.Body.FlushAsync();
             }
@@ -99,7 +105,7 @@ namespace QMTGroup.Web.Controller
             Response.ContentType = "multipart/x-mixed-replace; boundary=frame";
             Matrix? img = new();
             byte[] imageBytes;
-            Mat er = new Mat(@"C:\Users\quentin.de-potter\Dev\Q027\resource\image\mecanism1.png");
+            Mat er = new Mat(@"C:\Users\Quentin\Pictures\GTA2024.png");
             _videoStreamService.ImageHasChanged.WaitOne();
             img = _videoStreamService.LastImage;
             _videoStreamService.ImageHasChanged.Reset();

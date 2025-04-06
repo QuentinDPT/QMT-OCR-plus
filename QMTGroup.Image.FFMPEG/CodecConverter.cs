@@ -9,20 +9,20 @@ namespace QMTGroup.Image.FFMPEG
         public CodecConverter()
         { }
 
-        public byte[] ConvertToJpeg(Matrix image, int quality = 1)
+        public byte[] ConvertToJpeg(Matrix image, int quality)
         {
-            
-
             if (image.Channels == 1)
-                return ConvertToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_GRAY8);
+                return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_GRAY8);
 
             if (image.Channels == 3)
-                return ConvertToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_RGB24);
+                return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_RGB24);
 
-            return ConvertToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_GRAY8);
+            return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_GRAY8);
         }
 
-        private byte[] ConvertToJpeg(Span<byte> raw, int width, int height, int quality, AVPixelFormat rawStorageFormat)
+        public byte[] ConvertToJpeg(Matrix image) => ConvertToJpeg(image, 1);
+
+        private byte[] ConvertRawToJpeg(Span<byte> raw, int width, int height, int quality, AVPixelFormat rawStorageFormat)
         {
             unsafe
             {
