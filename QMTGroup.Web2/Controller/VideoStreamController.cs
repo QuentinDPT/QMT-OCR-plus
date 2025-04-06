@@ -5,6 +5,8 @@ using QMTGroup.Image;
 using QMTGroup.Web.Service;
 using SixLabors.ImageSharp;
 using QMTGroup.Image.Interface;
+using QMTGroup.Urn;
+using System.Text.Json;
 
 namespace QMTGroup.Web.Controller
 {
@@ -126,7 +128,7 @@ namespace QMTGroup.Web.Controller
 
 
                 // Envoi de l'image dans le format MJPEG
-                await Response.Body.WriteAsync(imageDataHeader);
+                await Response.Body.WriteAsync(System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n"));
                 await Response.Body.WriteAsync(imageBytes);
                 await Response.Body.WriteAsync([13, 10], 0, 2);
                 await Response.Body.FlushAsync();
@@ -168,6 +170,15 @@ namespace QMTGroup.Web.Controller
         public IActionResult AllCamera()
         {
             return new JsonResult(_videoStreamService.GetAllCamera());
+        }
+
+        [HttpGet("camera")]
+        public IActionResult CameraParameters([FromQuery] Guid cameraInstance)
+        {
+            return new JsonResult(_videoStreamService.GetCamera(cameraInstance), new JsonSerializerOptions
+            {
+                Converters = { new UrnConverter() }
+            });
         }
     }
 }

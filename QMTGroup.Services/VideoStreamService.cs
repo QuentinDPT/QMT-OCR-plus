@@ -7,7 +7,6 @@ namespace QMTGroup.Service;
 
 public class VideoStreamService
 {
-    private readonly IHubContext<VideoHub> _hubContext;
     private readonly ICamera _camera;
 
     public IImageFilter? ImageFilter
@@ -18,9 +17,8 @@ public class VideoStreamService
 
     private IImageFilter? _imageFilter = null;
 
-    public VideoStreamService(IHubContext<VideoHub> hubContext, ICamera camera)
+    public VideoStreamService(ICamera camera)
     {
-        _hubContext = hubContext;
         _camera = camera;
     }
 
@@ -33,7 +31,6 @@ public class VideoStreamService
     private void _camera_OnReciveImage(object? sender, Image.Matrix e)
     {
         var base64Image = ConvertMatToBase64(e);
-        _hubContext.Clients.All.SendAsync("ReceiveFrame", base64Image).Wait();
     }
 
     public void Stop()
