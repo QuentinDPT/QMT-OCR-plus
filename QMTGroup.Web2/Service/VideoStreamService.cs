@@ -26,7 +26,7 @@ public class VideoStreamService
 
     public void Start(Guid cameraInstance)
     {
-        var camera = _cameraFactory.Get<ICamera>(cameraInstance);
+        var camera = _cameraFactory[cameraInstance];
         if (camera is null)
             return;
 
@@ -46,7 +46,7 @@ public class VideoStreamService
 
     public void Stop(Guid cameraInstance)
     {
-        var camera = _cameraFactory.Get<ICamera>(cameraInstance);
+        var camera = _cameraFactory[cameraInstance];
         if (camera is null)
             return;
 
@@ -56,5 +56,10 @@ public class VideoStreamService
     internal Dictionary<Guid, string> GetAllCamera()
     {
         return _cameraFactory.ToDictionary(x => x.Key, x => x.Value.GetType().FullName ?? x.Value.GetType().Name);
+    }
+
+    internal ICamera GetCamera(Guid cameraInstance)
+    {
+        return _cameraFactory.First(x => x.Key == cameraInstance).Value;
     }
 }

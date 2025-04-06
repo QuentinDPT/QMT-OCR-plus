@@ -46,13 +46,8 @@ namespace QMTGroup.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapHub<VideoHub>("/videoHub");
-                endpoints.MapControllers();
-            });
-
             app.UseAuthorization();
+            app.MapControllers();
 
             app.MapRazorPages();
 
@@ -62,7 +57,22 @@ namespace QMTGroup.Web
 
             cameraFactory.Create<Camera.EmguCV.Camera>(new Camera.EmguCV.CameraParameters()
             {
-                Slot = 0
+                Slot = 0,
+                FlipHorizontal = true,
+                UserParamters = new Dictionary<Urn.Urn, double>()
+                {
+                    //{ new Urn.Urn("urn:Fps"), 10 },
+                    /*
+                    // 720p
+                    { new Urn.Urn("urn:FrameWidth"), 1280 },
+                    { new Urn.Urn("urn:FrameHeight"), 720 },
+                    //*/
+                    /*
+                    // 1080p
+                    { new Urn.Urn("urn:FrameWidth"), 1920 },
+                    { new Urn.Urn("urn:FrameHeight"), 1080 },
+                    //*/
+                }
             });
             cameraFactory.Create<Camera.Halcon.Camera>(null);
 

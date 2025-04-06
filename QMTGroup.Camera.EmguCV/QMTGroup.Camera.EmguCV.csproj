@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\QMTGroup.Camera\QMTGroup.Camera.csproj" />
     <ProjectReference Include="..\QMTGroup.Image.EmguCV\QMTGroup.Image.EmguCV.csproj" />
+    <ProjectReference Include="..\QMTGroup.Urn\QMTGroup.Urn.csproj" />
   </ItemGroup>
 
 </Project>

@@ -57,7 +57,7 @@ public readonly struct Urn : IEquatable<Urn>, IComparable<Urn>, IParsable<Urn>
     /// <inheritdoc/>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out Urn result)
     {
-        result = null;
+        result = default;
         if (s is null)
             return false;
         try

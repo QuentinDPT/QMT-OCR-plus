@@ -15,8 +15,8 @@
 }
 @section Scripts {
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin="">
+                              integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+                              crossorigin="">
     </script>
 
     <script>
@@ -213,6 +213,26 @@
         };
     </script>
 
+    <script>
+        $.ajax({
+            url: "https://localhost:7083/api/videostream/allcamera",
+            type: 'GET',
+            success: function(e){
+                var str = "";
+                for (const [key, value] of Object.entries(e)) {
+                    str += `<option value="${key}">${value}</option>`;
+                }
+                document.getElementById("CAM").innerHTML += str;
+            },
+            error: function(){
+            }
+        });
+
+        document.getElementById("CAM").addEventListener("change", function() {
+            guid = this.value;
+        });
+    </script>
+
     @* <!-- FPS -->
     <script>
         let fpsCounter = document.getElementById("LastFrame");
@@ -246,10 +266,17 @@
         </div>
         <div class="col-12 col-lg-3">
             <div class="d-flex flex-column">
-                <h1>Filtres</h1>
+                <h1>Contrôles</h1>
                 <table>
                     <thead></thead>
                     <tbody>
+                        <tr>
+                            <td>
+                                <select id="CAM" class="form-select mb-1 w-100 text-start" aria-label="Default select example">
+                                    <option selected>None</option>
+                                </select>
+                            </td>
+                        </tr>
                         <tr>
                             <td>
                                 <button id="ONOFF" class="btn btn-primary mb-1 w-100 text-start">Démarrer/Arreter</button>
