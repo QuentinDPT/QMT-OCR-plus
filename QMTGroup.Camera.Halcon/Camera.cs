@@ -1,7 +1,6 @@
 ﻿using HalconDotNet;
 using Microsoft.Extensions.Logging;
 using QMTGroup.Image;
-using System.Runtime.InteropServices;
 
 namespace QMTGroup.Camera.Halcon;
 
@@ -37,6 +36,7 @@ public class Camera : ICamera
             _logger.LogWarning(ex, "Failed to open Halcon framegrabber with mode 'USB3Vision'. Switching to 'File' mode as fallback.");
             _camera.OpenFramegrabber("File", 1, 1, 0, 0, 0, 0, "default", -1, "default", -1, "default", "default", "default", -1, -1);
         }
+
         _camera.GrabImageStart(-1);
         _acquisitionTask = Task.Run(() => _capturePeriodically(_cancellationToken.Token));
     }
@@ -105,10 +105,6 @@ public class Camera : ICamera
         _img?.Dispose();
         _img = null;
     }
-
-    public void __captAdnProcessImage() => _captureAndProcessImage();
-
-    public HFramegrabber? __camera { get => _camera; set => _camera = value; }
 
     private void _captureAndProcessImage()
     {

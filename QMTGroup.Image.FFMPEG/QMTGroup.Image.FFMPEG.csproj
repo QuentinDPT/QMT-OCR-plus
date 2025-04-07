@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj" />
     <ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
   </ItemGroup>
 

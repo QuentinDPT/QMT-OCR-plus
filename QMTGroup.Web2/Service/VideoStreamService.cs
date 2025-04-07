@@ -50,6 +50,7 @@ public class VideoStreamService
         if (camera is null)
             return;
 
+        camera.OnReciveImage -= _camera_OnReciveImage_mjpeg;
         camera.StopCapture();
     }
 

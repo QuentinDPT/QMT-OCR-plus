@@ -11,6 +11,9 @@
         .leaflet-container {
             background-color: white !important;
         }
+        .leaflet-image-layer {
+            image-rendering: pixelated;
+        }
     </style>
 }
 @section Scripts {
@@ -46,7 +49,7 @@
             center: [0, 0], // Centre exact en (0,0)
             zoom: 12, // Zoom de départ
             minZoom: 11, // Zoom minimum autorisé
-            maxZoom: 15, // Zoom maximum
+            maxZoom: 25, // Zoom maximum
             maxBounds: bounds, // Empêche l'utilisateur de sortir
             maxBoundsViscosity: .9, // Force la carte à rester dans les limites
             zoomAnimation: false,
@@ -69,7 +72,7 @@
         // Ajuster la vue pour afficher toute l'image
         map.fitBounds(bounds);
 
-
+        
         const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
         svgElement.setAttribute('viewBox', '0 0 200 200');

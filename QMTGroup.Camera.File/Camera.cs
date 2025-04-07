@@ -1,5 +1,6 @@
 ﻿using QMTGroup.Image;
 using System.Drawing;
+using System.Threading;
 
 namespace QMTGroup.Camera.File;
 
@@ -7,12 +8,17 @@ public class Camera : ICamera
 {
     private readonly CameraParameters _parameters;
     private Matrix _image;
-    private Task _acquisitionTask;
+    private Task _acquisitionTask = Task.CompletedTask;
     private CancellationTokenSource _cancellationToken = new();
 
     public Camera(CameraParameters parameters)
     {
         _parameters = parameters;
+
+        if (!System.IO.File.Exists(parameters.Path))
+        {
+            
+        }
     }
 
     /// <inheritdoc/>
@@ -21,6 +27,9 @@ public class Camera : ICamera
     /// <inheritdoc/>
     public void StartCapture()
     {
+        if (!_acquisitionTask.IsCompleted)
+            return;
+
         _image = _loadImage(_parameters.Path);
 
         _acquisitionTask = Task.Run(() => _capturePeriodically(_cancellationToken.Token));
@@ -65,5 +74,7 @@ public class Camera : ICamera
     {
         _cancellationToken.Cancel();
         _acquisitionTask?.Wait();
+        _cancellationToken = new CancellationTokenSource();
+        _image.Dispose();
     }
 }
