@@ -142,11 +142,8 @@ public class Camera : ICamera
 
         if(requiredImageSize != matrix.Data.Length)
         {
-            matrix.SetDataSize(requiredImageSize);
+            matrix.SetDataSize(requiredImageSize, ht_width.I, ht_height.I, DataType.Y_8);
             matrix.SetData(matrix.Data);
-            matrix.Width = (uint)ht_width.I;
-            matrix.Height = (uint)ht_height.I;
-            matrix.ChannelType = typeof(byte);
         }
 
         matrix.SetData(hv_ptrImage);

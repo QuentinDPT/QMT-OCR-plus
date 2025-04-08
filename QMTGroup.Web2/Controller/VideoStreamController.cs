@@ -7,6 +7,7 @@ using SixLabors.ImageSharp;
 using QMTGroup.Image.Interface;
 using QMTGroup.Urn;
 using System.Text.Json;
+using System.Buffers;
 
 namespace QMTGroup.Web.Controller
 {
@@ -61,41 +62,45 @@ namespace QMTGroup.Web.Controller
             int imageWaitTimeout = 200;
             Matrix img = new Matrix(System.Buffers.ArrayPool<byte>.Create(1 << 30, 1));
             byte[] imageDataHeader = [];
+            byte[] imageDataBuffer = ArrayPool<byte>.Shared.Rent(1);
 
             Response.ContentType = "multipart/x-mixed-replace; boundary=frame";
 
             do
             {
-                if(!_videoStreamService.ImageHasChanged.WaitOne(imageWaitTimeout))
+                if (!_videoStreamService.ImageHasChanged.WaitOne(imageWaitTimeout))
                     continue;
 
                 if (_videoStreamService.LastImage is null)
                     continue;
 
-                if(_videoStreamService.LastImage.Data.Length != img.Data.Length)
+                if (_videoStreamService.LastImage.Data.Length != img.Data.Length)
                 {
-                    img.Width = _videoStreamService.LastImage.Width;
-                    img.Height = _videoStreamService.LastImage.Height;
-                    img.Channels = _videoStreamService.LastImage.Channels;
-                    img.ChannelType = _videoStreamService.LastImage.ChannelType;
-                    img.SetDataSize(_videoStreamService.LastImage.Data.Length);
+                    ArrayPool<byte>.Shared.Return(imageDataBuffer);
+                    imageDataBuffer = ArrayPool<byte>.Shared.Rent(_videoStreamService.LastImage.Data.Length);
+                    img.SetDataSize(_videoStreamService.LastImage.Data.Length,
+                        _videoStreamService.LastImage.Width,
+                        _videoStreamService.LastImage.Height,
+                        _videoStreamService.LastImage.ChannelType);
                     imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n");
                 }
                 img.SetData(_videoStreamService.LastImage.Data);
 
                 _videoStreamService.ImageHasChanged.Reset();
 
-                var jpegData = _jpegConverter.ConvertToJpeg(img);
+                imageDataBuffer = _jpegConverter.ConvertToJpeg(img);
 
                 // Envoi de l'image dans le format MJPEG
                 await Response.Body.WriteAsync(imageDataHeader);
-                await Response.Body.WriteAsync(jpegData);
+                await Response.Body.WriteAsync(imageDataBuffer);
                 await Response.Body.WriteAsync([13, 10], 0, 2);
                 await Response.Body.FlushAsync();
             }
             while (!HttpContext.RequestAborted.IsCancellationRequested);
 
             img.Dispose();
+
+            ArrayPool<byte>.Shared.Return(imageDataBuffer);
 
             return new EmptyResult();
         }

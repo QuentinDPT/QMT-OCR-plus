@@ -20,7 +20,7 @@ public static class MatrixExtention
         //*/
     }
 
-    public static void SetPixel(this Matrix self, uint x, uint y, byte[] pixel)
+    public static void SetPixel(this Matrix self, int x, int y, byte[] pixel)
     {
         if (x > self.Width)
             throw new ArgumentOutOfRangeException(nameof(x), "x must be less than Width");
@@ -33,7 +33,7 @@ public static class MatrixExtention
 
         for (int i = 0; i < pixel.Length; i++)
         {
-            self.Data[(int)(self.Width * y + x) * (int)self.Channels + i] = pixel[i];
+            self.Data[(self.Width * y + x) * self.Channels + i] = pixel[i];
         }
     }
 

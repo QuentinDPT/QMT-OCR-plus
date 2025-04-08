@@ -1,6 +1,5 @@
 ﻿using QMTGroup.Image;
 using System.Drawing;
-using System.Threading;
 
 namespace QMTGroup.Camera.File;
 
@@ -40,24 +39,29 @@ public class Camera : ICamera
         Matrix result;
         using (var image = new Bitmap(resourcePath))
         {
-            int width = image.Width;
-            int height = image.Height;
-            result = new Matrix(width, height, 3)
-            {
-                ChannelType = typeof(byte)
-            };
+            result = new Matrix(image.Width, image.Height, DataType.BGR_8);
 
-            for (uint y = 0; y < height; y++)
+            for (int y = 0; y < image.Height; y++)
             {
-                for (uint x = 0; x < width; x++)
+                for (int x = 0; x < image.Width; x++)
                 {
-                    System.Drawing.Color pixelColor = image.GetPixel((int)x, (int)y);
+                    System.Drawing.Color pixelColor = image.GetPixel(x, y);
                     result.SetPixel(x, y, [pixelColor.B, pixelColor.G, pixelColor.R]);  // Par exemple, on peut juste stocker la composante rouge
                 }
             }
         }
-
         return result;
+    }
+
+    private static DataType _getDataType(System.Drawing.Imaging.PixelFormat format)
+    {
+        switch (format)
+        {
+            case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                return DataType.XRGB_8;
+            default:
+                throw new NotImplementedException();
+        }
     }
 
     private void _capturePeriodically(CancellationToken token)

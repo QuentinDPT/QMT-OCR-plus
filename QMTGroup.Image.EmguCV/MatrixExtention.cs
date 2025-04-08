@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using System.Drawing;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace QMTGroup.Image;
 
@@ -8,38 +9,24 @@ public static class MatrixExtention
 {
     public static Matrix FromMat(Mat mat)
     {
-        Type ChannelType;
-        switch (mat.Depth)
+        DataType dataType;
+        switch (mat.NumberOfChannels)
         {
-            case DepthType.Cv8U:
-                ChannelType = typeof(byte);
+            case 1:
+                dataType = DataType.Y_8;
                 break;
-            case DepthType.Cv8S:
-                ChannelType = typeof(sbyte);
+            case 3:
+                dataType = DataType.BGR_8;
                 break;
-            case DepthType.Cv16U:
-                ChannelType = typeof(ushort);
-                break;
-            case DepthType.Cv16S:
-                ChannelType = typeof(short);
-                break;
-            case DepthType.Cv32S:
-                ChannelType = typeof(int);
-                break;
-            case DepthType.Cv32F:
-                ChannelType = typeof(float);
-                break;
-            case DepthType.Cv64F:
-                ChannelType = typeof(double);
+            case 4:
+                dataType = DataType.XRGB_8;
                 break;
             default:
-                throw new TypeLoadException("Unsupported type.");
+                throw new NotImplementedException();
         }
 
-        var matrix = new Matrix(mat.Width, mat.Height, mat.NumberOfChannels)
-        {
-            ChannelType = ChannelType,
-        };
+        var matrix = new Matrix(mat.Width, mat.Height, dataType);
+
         matrix.SetData(mat.GetRawData());
 
         return matrix;
@@ -52,90 +39,36 @@ public static class MatrixExtention
 
     public static Mat ToMat(this Matrix self)
     {
-        DepthType depthType;
+        //return new Mat([(int)self.Height, (int)self.Width, (int)self.Channels], _getEmguDepthType(self.ChannelType), self.GetDataPtr());
 
-        if (self.ChannelType == typeof(byte))
-        {
-            depthType = DepthType.Cv8U;
-        }
-        else if (self.ChannelType == typeof(sbyte))
-        {
-            depthType = DepthType.Cv8S;
-        }
-        else if (self.ChannelType == typeof(ushort))
-        {
-            depthType = DepthType.Cv16U;
-        }
-        else if (self.ChannelType == typeof(short))
-        {
-            depthType = DepthType.Cv16S;
-        }
-        else if (self.ChannelType == typeof(int))
-        {
-            depthType = DepthType.Cv32S;
-        }
-        else if (self.ChannelType == typeof(float))
-        {
-            depthType = DepthType.Cv32F;
-        }
-        else if (self.ChannelType == typeof(double))
-        {
-            depthType = DepthType.Cv64F;
-        }
-        else
-        {
-            throw new TypeLoadException("Unsupported type.");
-        }
+        return new Mat(new Size((int)self.Height, (int)self.Width), _getEmguDepthType(self.ChannelType), (int)self.Channels, self.ToIntPtr(), (int)self.Width * (int)self.Channels);
 
-        //return new Mat([(int)self.Height, (int)self.Width, (int)self.Channels], depthType, self.GetDataPtr());
-
-        return new Mat(new Size((int)self.Height, (int)self.Width), depthType, (int)self.Channels, self.GetDataPtr(), (int)self.Width * (int)self.Channels);
-
-        return new Mat(new Size((int)self.Height, (int)self.Width), depthType, (int)self.Channels, self.GetDataPtr(), 1);
+        return new Mat(new Size((int)self.Height, (int)self.Width), _getEmguDepthType(self.ChannelType), (int)self.Channels, self.ToIntPtr(), 1);
     }
 
     public static Mat ToMatCopy(this Matrix self)
     {
-        DepthType depthType;
+        byte[] b = self.Data.ToArray();
 
-        if (self.ChannelType == typeof(byte))
-        {
-            depthType = DepthType.Cv8U;
-        }
-        else if (self.ChannelType == typeof(sbyte))
-        {
-            depthType = DepthType.Cv8S;
-        }
-        else if (self.ChannelType == typeof(ushort))
-        {
-            depthType = DepthType.Cv16U;
-        }
-        else if (self.ChannelType == typeof(short))
-        {
-            depthType = DepthType.Cv16S;
-        }
-        else if (self.ChannelType == typeof(int))
-        {
-            depthType = DepthType.Cv32S;
-        }
-        else if (self.ChannelType == typeof(float))
-        {
-            depthType = DepthType.Cv32F;
-        }
-        else if (self.ChannelType == typeof(double))
-        {
-            depthType = DepthType.Cv64F;
-        }
-        else
-        {
-            throw new TypeLoadException("Unsupported type.");
-        }
+        //return new Mat(new Size(self.Height, self.Width), _getEmguDepthType(self.ChannelType), self.Channels, self.GetDataPtr(), self.Width * self.Channels);
 
-        Mat result = new Mat((int)self.Height, (int)self.Width, depthType, (int)self.Channels);
+        return new Mat(new Size(self.Width, self.Height), DepthType.Cv8U, self.Channels, b.ToIntPtr(), self.Width * self.Channels);
+    }
 
-        result.SetTo(self.Data.ToArray());
-
-        return result;
+    private static DepthType _getEmguDepthType(DataType chanelType)
+    {
+        switch (chanelType)
+        {
+            case DataType.Y_8:
+                return DepthType.Cv8U;
+            case DataType.RGB_8:
+            case DataType.BGR_8:
+                return DepthType.Cv32F;
+            case DataType.XRGB_8:
+                return DepthType.Cv64F;
+            default:
+                throw new NotImplementedException();
+        }
     }
 }
 

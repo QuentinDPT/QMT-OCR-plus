@@ -17,6 +17,9 @@ namespace QMTGroup.Image.FFMPEG
             if (image.Channels == 3)
                 return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_RGB24);
 
+            if (image.Channels == 4)
+                return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_RGBA);
+
             return ConvertRawToJpeg(image.Data, (int)image.Width, (int)image.Height, quality, AVPixelFormat.AV_PIX_FMT_GRAY8);
         }
 

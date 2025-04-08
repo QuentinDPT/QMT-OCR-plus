@@ -1,24 +1,25 @@
 ﻿using Emgu.CV;
+using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using QMTGroup.Image.Interface;
 
 namespace QMTGroup.Image.EmguCV
 {
     public class CodecConverter : IJpegConverter
     {
+        private readonly int[] parameters = [(int)ImwriteFlags.JpegQuality, 95];
+        private readonly Mat _sharedMat = new Mat();
+
         public byte[] ConvertToJpeg(Matrix image, int quality)
         {
             try
             {
+                parameters[1] = quality;
                 Mat emguMatrix = image.ToMatCopy();
-
-                if (image.Channels == 1)
-                    return emguMatrix.ToImage<Gray, byte>().ToJpegData(quality);
-
-                if (image.Channels == 3)
-                    return emguMatrix.ToImage<Bgr, byte>().ToJpegData(quality);
-
-                return emguMatrix.ToImage<Gray, byte>().ToJpegData(quality);
+                VectorOfByte jpegData = new VectorOfByte();
+                CvInvoke.Imencode(".jpg", emguMatrix, jpegData);
+                return jpegData.ToArray();
             }
             catch (Exception ex)
             {

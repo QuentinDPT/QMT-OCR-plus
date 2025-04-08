@@ -1,4 +1,3 @@
-using QMTGroup.Camera;
 using QMTGroup.Image.Interface;
 using QMTGroup.Web.Factory;
 using QMTGroup.Web.Service;
@@ -23,11 +22,6 @@ namespace QMTGroup.Web
             builder.Services.AddSingleton<VideoStreamService>();
             builder.Services.AddSingleton<ICameraFactory, CameraFactory>();
             builder.Services.AddSingleton<IJpegConverter, Image.EmguCV.CodecConverter>();
-            //builder.Services.AddSingleton<ICamera, Camera.EmguCV.Camera>();
-            //builder.Services.AddSingleton(x => new Camera.EmguCV.CameraParameters()
-            //{
-            //    Slot = 0
-            //});
             builder.Services.AddSingleton<CodeStorageService>();
 
             builder.Logging.ClearProviders(); // Désactive tous les loggers
@@ -79,8 +73,8 @@ namespace QMTGroup.Web
             cameraFactory.Create<Camera.Halcon.Camera>(null);
             cameraFactory.Create<Camera.File.Camera>(new Camera.File.CameraParameters()
             {
-                //Path = @"..\rgb_calibration.png"
-                Path = @"..\heavy.jpg"
+                Path = @"..\rgb_calibration.png"
+                //Path = @"..\heavy.jpg"
             });
 
             app.Run();
