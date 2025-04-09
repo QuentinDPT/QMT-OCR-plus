@@ -84,7 +84,7 @@ namespace QMTGroup.Web.Controller
                         _videoStreamService.LastImage.ChannelType);
                     imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n");
                 }
-                img.SetData(_videoStreamService.LastImage.Data);
+                img.SetData(_videoStreamService.LastImage.Data.ToArray());
 
                 _videoStreamService.ImageHasChanged.Reset();
 
