@@ -60,9 +60,9 @@ namespace QMTGroup.Web.Controller
         public async Task<IActionResult> MjpegStream_2([FromQuery] Guid cameraInstance)
         {
             int imageWaitTimeout = 200;
-            Matrix img = new Matrix(System.Buffers.ArrayPool<byte>.Create(1 << 30, 1));
             byte[] imageDataHeader = [];
             byte[] imageDataBuffer = ArrayPool<byte>.Shared.Rent(1);
+            int dataLength = 0;
 
             Response.ContentType = "multipart/x-mixed-replace; boundary=frame";
 
@@ -74,21 +74,19 @@ namespace QMTGroup.Web.Controller
                 if (_videoStreamService.LastImage is null)
                     continue;
 
-                if (_videoStreamService.LastImage.Data.Length != img.Data.Length)
-                {
-                    ArrayPool<byte>.Shared.Return(imageDataBuffer);
-                    imageDataBuffer = ArrayPool<byte>.Shared.Rent(_videoStreamService.LastImage.Data.Length);
-                    img.SetDataSize(_videoStreamService.LastImage.Data.Length,
-                        _videoStreamService.LastImage.Width,
-                        _videoStreamService.LastImage.Height,
-                        _videoStreamService.LastImage.ChannelType);
-                    imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {img.Data.Length}\r\n\r\n");
-                }
-                img.SetData(_videoStreamService.LastImage.Data);
+                Matrix lastImage = _videoStreamService.LastImage.Clone();
 
                 _videoStreamService.ImageHasChanged.Reset();
 
-                imageDataBuffer = _jpegConverter.ConvertToJpeg(img);
+                if (lastImage.Data.Length != dataLength)
+                {
+                    dataLength = lastImage.Data.Length;
+                    ArrayPool<byte>.Shared.Return(imageDataBuffer);
+                    imageDataBuffer = ArrayPool<byte>.Shared.Rent(lastImage.Data.Length);
+                    imageDataHeader = System.Text.Encoding.UTF8.GetBytes($"--frame\r\nContent-Type: image/jpeg\r\nContent-Length: {lastImage.Data.Length}\r\n\r\n");
+                }
+
+                imageDataBuffer = _jpegConverter.ConvertToJpeg(lastImage);
 
                 // Envoi de l'image dans le format MJPEG
                 await Response.Body.WriteAsync(imageDataHeader);
@@ -97,8 +95,6 @@ namespace QMTGroup.Web.Controller
                 await Response.Body.FlushAsync();
             }
             while (!HttpContext.RequestAborted.IsCancellationRequested);
-
-            img.Dispose();
 
             ArrayPool<byte>.Shared.Return(imageDataBuffer);
 

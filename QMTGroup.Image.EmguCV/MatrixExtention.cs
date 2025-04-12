@@ -39,36 +39,7 @@ public static class MatrixExtention
 
     public static Mat ToMat(this Matrix self)
     {
-        //return new Mat([(int)self.Height, (int)self.Width, (int)self.Channels], _getEmguDepthType(self.ChannelType), self.GetDataPtr());
-
-        return new Mat(new Size((int)self.Height, (int)self.Width), _getEmguDepthType(self.ChannelType), (int)self.Channels, self.ToIntPtr(), (int)self.Width * (int)self.Channels);
-
-        return new Mat(new Size((int)self.Height, (int)self.Width), _getEmguDepthType(self.ChannelType), (int)self.Channels, self.ToIntPtr(), 1);
-    }
-
-    public static Mat ToMatCopy(this Matrix self)
-    {
-        byte[] b = self.Data.ToArray();
-
-        //return new Mat(new Size(self.Height, self.Width), _getEmguDepthType(self.ChannelType), self.Channels, self.GetDataPtr(), self.Width * self.Channels);
-
-        return new Mat(new Size(self.Width, self.Height), DepthType.Cv8U, self.Channels, b.ToIntPtr(), self.Width * self.Channels);
-    }
-
-    private static DepthType _getEmguDepthType(DataType chanelType)
-    {
-        switch (chanelType)
-        {
-            case DataType.Y_8:
-                return DepthType.Cv8U;
-            case DataType.RGB_8:
-            case DataType.BGR_8:
-                return DepthType.Cv32F;
-            case DataType.XRGB_8:
-                return DepthType.Cv64F;
-            default:
-                throw new NotImplementedException();
-        }
+        return new Mat(new Size(self.Width, self.Height), DepthType.Cv8U, self.Channels, self.ToIntPtr(), self.Width * self.Channels);
     }
 }
 

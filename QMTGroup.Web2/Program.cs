@@ -73,7 +73,8 @@ namespace QMTGroup.Web
             cameraFactory.Create<Camera.Halcon.Camera>(null);
             cameraFactory.Create<Camera.File.Camera>(new Camera.File.CameraParameters()
             {
-                Path = @"..\rgb_calibration.png"
+                Path = @"..\rgb_calibration.png",
+                AcquisitionLoopSleep = 10,
                 //Path = @"..\heavy.jpg"
             });
 

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace QMTGroup.Image;
 
-public record Matrix : IDisposable
+public class Matrix : IDisposable, Core.IClonable<Matrix>
 {
     private ArrayPool<byte> _memoryPool = ArrayPool<byte>.Shared;
 
@@ -136,5 +136,14 @@ public record Matrix : IDisposable
     public void Dispose()
     {
         _memoryPool.Return(_innerDataSpace);
+    }
+
+    public Matrix Clone()
+    {
+        var result = new Matrix(_memoryPool, _width, _height, _channelType);
+
+        Data.CopyTo(result.Data);
+
+        return result;
     }
 }

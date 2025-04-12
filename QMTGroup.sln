@@ -41,6 +41,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Camera.File", "QMT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Overlay", "QMTGroup.Overlay\QMTGroup.Overlay.csproj", "{E46E2D1E-FE68-435F-9D49-0AA28485770A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMTGroup.Core", "QMTGroup.Core\QMTGroup.Core.csproj", "{1B6426C1-D8EA-463F-8205-7692F7759074}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +195,14 @@ Global
 		{E46E2D1E-FE68-435F-9D49-0AA28485770A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E46E2D1E-FE68-435F-9D49-0AA28485770A}.Release|x64.ActiveCfg = Release|Any CPU
 		{E46E2D1E-FE68-435F-9D49-0AA28485770A}.Release|x64.Build.0 = Release|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Debug|x64.Build.0 = Debug|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Release|x64.ActiveCfg = Release|Any CPU
+		{1B6426C1-D8EA-463F-8205-7692F7759074}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
