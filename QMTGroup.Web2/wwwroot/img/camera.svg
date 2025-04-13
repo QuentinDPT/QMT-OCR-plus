@@ -1,0 +1,130 @@
+<svg width="800px" height="800px" viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg">
+     <style>
+        * {
+            transition: all 1s;
+        }
+
+        .iso-context {
+            transform: rotate(-45deg) skew(15deg, 15deg);
+            transform-origin: center;
+        }
+
+        .iso-top { }
+
+        .iso-left {
+            transform-origin: 25px 0;
+            transform: translateY(-15px) skewY(-45deg);
+        }
+
+        .iso-right {
+            transform: skewX(-45deg);
+        }
+
+        :root {
+            --primary-color: #1e1264;
+            --secondary-color: #72efe9;
+            --tertiary-color: #494399;
+
+            --left-color: #1e1264;
+            --right-color: #494399;
+            --top-color: #72efe9;
+        }
+
+        .pulse-opacity {
+            /*animation: pulse 1.4s infinite alternate;*/
+            fill: none;
+        }
+
+        @keyframes pulse {
+            0%   { opacity: 1; }
+            100%  { opacity: 0; }
+        }
+
+        .zomm-anim{
+            animation: zoom 2.8s infinite alternate;
+        }
+
+        @keyframes zoom{
+            0%{
+                transform: translate(0px,0px);
+            }
+            25%{
+                transform: translate(-7px,-7px);
+            }
+            40%{
+                transform: translate(-3px,-3px);
+            }
+            50%{
+                transform: translate(-3px,-3px);
+            }
+            70%{
+                transform: translate(-7px,-7px);
+            }
+            100%{
+                transform: translate(-5px,-5px);
+            }
+        }
+        
+
+    </style>
+
+    <defs>
+        <linearGradient id="objectives" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--right-color)" />
+            <stop offset="23%" stop-color="var(--right-color)" />
+            <stop offset="76%" stop-color="var(--top-color)" />
+            <stop offset="100%" stop-color="var(--top-color)" />
+        </linearGradient>
+        
+        <linearGradient id="objectives-oblique" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--right-color)" />
+            <stop offset="23%" stop-color="var(--right-color)" />
+            <stop offset="76%" stop-color="var(--top-color)" />
+            <stop offset="100%" stop-color="var(--top-color)" />
+        </linearGradient>
+    </defs>
+
+    <g transform-origin="center" transform="translate(-23,7)">
+        <g class="iso-context" stroke="#ddd" stroke-width=".4">
+                <!-- Board -->
+                <g transform-origin="center" transform="translate(100,100)">
+                    <g class="iso-left" fill="var(--left-color)">
+                        <g>
+                            <rect x="-30" y="-30" width="60" height="60" rx="0" ry="0"/>
+                            <circle cx="0" cy="0" r="25" fill="url(#objectives-oblique)"/>
+                            
+                            <circle cx="22" cy="-22" r="3" fill="red" class="pulse-opacity" stroke="none"/>
+                            <circle cx="22" cy="-22" r="3" fill="none"/>
+                        </g>
+                        <g transform="translate(-3,-3)">
+                            <circle cx="0" cy="0" r="25" />
+                            <circle cx="0" cy="0" r="20" />
+                            <circle cx="0" cy="0" r="18" />
+                        </g>
+                        <g transform="translate(-15,-15)">
+                            <rect x="-18" y="-18" width="36" height="53" rx="18" ry="18" transform-origin="0 0" transform="rotate(-45)" fill="url(#objectives)"/>
+                            <g class="zomm-anim">
+                                <rect x="-17.8" y="0" width="35.6" height="17" transform-origin="0 0" transform="rotate(-45)" stroke="none" fill="url(#objectives)"/>
+                                <circle cx="0" cy="0" r="18" />
+                                <g transform="translate(-12.73, 12.73)">
+                                    <line x1="0" y1="0" x2="13" y2="13"/>
+                                </g>
+                                <g transform="translate(12.73, -12.73)">
+                                    <line x1="0" y1="0" x2="13" y2="13"/>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+
+                    <g class="iso-top">
+                        <rect fill="var(--top-color)" x="30" y="-50" width="35" height="60"/>
+                    </g>
+                    
+                    <g class="iso-right">
+                        <rect fill="var(--right-color)" x="40" y="10" width="35" height="60"/>
+                    </g>
+                </g>
+        </g>
+    </g>
+</svg>

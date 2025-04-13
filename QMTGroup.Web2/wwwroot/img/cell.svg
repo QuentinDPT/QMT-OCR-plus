@@ -1,0 +1,120 @@
+<svg width="800px" height="800px" viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg">
+     <style>
+        .iso-context {
+            transform: rotate(-45deg) skew(15deg, 15deg);
+            transform-origin: center;
+        }
+
+        .iso-top { }
+
+        .iso-left {
+            transform-origin: 25px 0;
+            transform: translateY(-15px) skewY(-45deg);
+        }
+
+        .iso-right {
+            transform: skewX(-45deg);
+        }
+
+        :root {
+            --primary-color: #1e1264;
+            --secondary-color: #72efe9;
+            --tertiary-color: #494399;
+
+            --chip-from: #72efe9;
+            --chip-to: #1e1264;
+            --chip-opacity: .7;
+            
+            --hollow-color: #494399;
+            --hollow-opacity: .7;
+            
+            --board-color: #bebdff;
+            --board-chip-color: #ccc;
+        }
+
+    </style>
+
+    <defs>
+        <linearGradient id="hollow-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--hollow-color)" stop-opacity="var(--hollow-opacity)" />
+            <stop offset="100%" stop-color="var(--hollow-color)" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="hollow-left" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="var(--hollow-color)" stop-opacity="var(--hollow-opacity)" />
+            <stop offset="100%" stop-color="var(--hollow-color)" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="hollow-top" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="var(--hollow-color)" stop-opacity="var(--hollow-opacity)" />
+            <stop offset="100%" stop-color="var(--hollow-color)" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="hollow-bottom" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="var(--hollow-color)" stop-opacity="var(--hollow-opacity)" />
+            <stop offset="100%" stop-color="var(--hollow-color)" stop-opacity="0" />
+        </linearGradient>
+
+        <linearGradient id="microchip-right" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--chip-from)" />
+            <stop offset="100%" stop-color="var(--chip-to)" />
+        </linearGradient>
+        <linearGradient id="microchip-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="var(--chip-from)" />
+            <stop offset="100%" stop-color="var(--chip-to)" />
+        </linearGradient>
+        <linearGradient id="microchip-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--chip-from)" />
+            <stop offset="100%" stop-color="var(--chip-to)" />
+        </linearGradient>
+    </defs>
+
+    <g class="iso-context" stroke="#fff" stroke-width=".4">
+
+        <!-- Hollow effect -->
+        <g stroke="none">
+            <rect x="80" y="19" width="40" height="54" fill="url(#hollow-top)" />
+            <rect x="13" y="83" width="54" height="40" fill="url(#hollow-left)" />
+
+            <rect x="80" y="133" width="40" height="54" fill="url(#hollow-bottom)" />
+            <rect x="127" y="83" width="54" height="40" fill="url(#hollow-right)" />
+        </g>
+
+        <!-- Board -->
+        <g fill="var(--board-color)">
+            <!-- BOTTOM -->
+            <g transform="translate(70, 130)">
+                <rect class="iso-right" x="0" y="0" width="60" height="3"/>
+            </g>
+
+            <!-- LEFT -->
+            <g transform="translate(67,63)">
+                <rect class="iso-left" x="0" y="0" width="3" height="60"/>
+            </g>
+
+            <rect class="iso-top" x="70" y="70" width="60" height="60"/>
+            <rect class="iso-top" x="77.5" y="77.5" width="45" height="45" fill="var(--board-chip-color)" stroke="none"/>
+        </g>
+
+        <!-- Micro-chip -->
+        <g fill="var(--chip-from)" class="microchip" stroke="#fff" stroke-width=".4">
+            <!-- TOP -->
+            <g transform="translate(82.5,72.5)" fill="url(#microchip-right)">
+                <rect class="iso-right" x="0" y="0" width="45" height="5" opacity="var(--chip-opacity)"/>
+            </g>
+            <!-- RIGHT -->
+            <g transform="translate(122.5,67.5)" fill="url(#microchip-left)">
+                <rect class="iso-left" x="0" y="0" width="5" height="45" opacity="var(--chip-opacity)"/>
+            </g>
+            <!-- LEFT -->
+            <g transform="translate(77.5,67.5)" fill="url(#microchip-left)" opacity="var(--chip-opacity)">
+                <rect class="iso-left" x="0" y="0" width="5" height="45"/>
+            </g>
+            <!-- BOTTOM -->
+            <g transform="translate(82.5,117.5)" fill="url(#microchip-right)" opacity="var(--chip-opacity)">
+                <rect class="iso-right" x="0" y="0" width="45" height="5"/>
+            </g>
+            <rect class="iso-top" width="45" height="45" y="72.5" x="82.5" fill="url(#microchip-top)" opacity="var(--chip-opacity)"/>
+            <rect class="iso-top" width="20" height="20" y="85" x="95" opacity=".8"/>
+        </g>
+
+    </g>
+</svg>
