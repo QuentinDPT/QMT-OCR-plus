@@ -6,4 +6,11 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.Overlay\QMTGroup.Overlay.csproj" />
+  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="netDxf" Version="2023.11.10" />
+	</ItemGroup>
+
 </Project>

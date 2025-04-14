@@ -1,68 +1,34 @@
-﻿using Svg;
-using System.Collections;
+﻿using System.Collections;
 
 namespace QMTGroup.Overlay;
 
 public class GroupOverlay : IOverlay, IList<IOverlay>
 {
-    public IOverlay this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    private List<IOverlay> _overlays = new();
 
-    public int Count => throw new NotImplementedException();
+    public IOverlay this[int index] { get => _overlays[index]; set => _overlays[index] = value; }
 
-    public bool IsReadOnly => throw new NotImplementedException();
+    public int Count => _overlays.Count();
 
-    public void Add(IOverlay item)
-    {
-        throw new NotImplementedException();
-    }
+    public virtual bool IsReadOnly => true;
 
-    public void Clear()
-    {
-        throw new NotImplementedException();
-    }
+    public void Add(IOverlay item) => _overlays.Add(item);
 
-    public bool Contains(IOverlay item)
-    {
-        throw new NotImplementedException();
-    }
+    public void Clear() => _overlays.Clear();
 
-    public void CopyTo(IOverlay[] array, int arrayIndex)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Contains(IOverlay item) => _overlays.Contains(item);
 
-    public IEnumerator<IOverlay> GetEnumerator()
-    {
-        throw new NotImplementedException();
-    }
+    public void CopyTo(IOverlay[] array, int arrayIndex) => _overlays.CopyTo(array, arrayIndex);
 
-    public int IndexOf(IOverlay item)
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerator<IOverlay> GetEnumerator() => _overlays.GetEnumerator();
 
-    public void Insert(int index, IOverlay item)
-    {
-        throw new NotImplementedException();
-    }
+    public int IndexOf(IOverlay item) => _overlays.IndexOf(item);
 
-    public bool Remove(IOverlay item)
-    {
-        throw new NotImplementedException();
-    }
+    public void Insert(int index, IOverlay item) => _overlays.Insert(index, item);
 
-    public void RemoveAt(int index)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Remove(IOverlay item) => _overlays.Remove(item);
 
-    public SvgGroup ToSvg()
-    {
-        throw new NotImplementedException();
-    }
+    public void RemoveAt(int index) => _overlays.RemoveAt(index);
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => _overlays.GetEnumerator();
 }

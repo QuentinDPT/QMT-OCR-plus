@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Svg" Version="3.4.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.Overlay\QMTGroup.Overlay.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,15 +1,10 @@
-﻿using Svg;
+﻿namespace QMTGroup.Overlay;
 
-namespace QMTGroup.Overlay;
-
-public sealed class CricleOverlay : IOverlay
+public sealed class CircleOverlay : IOverlay
 {
     public double X { get; set; }
-    public double Y { get; set; }
-    public double Radius { get; set; }
 
-    public SvgGroup ToSvg()
-    {
-        throw new NotImplementedException();
-    }
+    public double Y { get; set; }
+
+    public double Radius { get; set; }
 }
