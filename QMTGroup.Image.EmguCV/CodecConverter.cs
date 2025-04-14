@@ -7,18 +7,14 @@ namespace QMTGroup.Image.EmguCV
 {
     public class CodecConverter : IJpegConverter
     {
-        private readonly int[] parameters = [(int)ImwriteFlags.JpegQuality, 95];
+
 
         public byte[] ConvertToJpeg(Matrix image, int quality)
         {
             try
             {
-                parameters[1] = quality;
-                Mat emguMatrix = image.ToMat().Clone();
-                VectorOfByte jpegData = new VectorOfByte();
-                CvInvoke.Imencode(".jpg", emguMatrix, jpegData);
-                emguMatrix.Dispose();
-                return jpegData.ToArray();
+                Mat emguMatrix = image.ToMat(); // MERGE .ToMat().Clone() en distance
+                return CvInvoke.Imencode(".jpg", emguMatrix , new KeyValuePair<ImwriteFlags, int>(ImwriteFlags.JpegQuality, quality));
             }
             catch (Exception ex)
             {
