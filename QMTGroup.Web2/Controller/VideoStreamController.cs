@@ -100,7 +100,14 @@ namespace QMTGroup.Web.Controller
 
             img.Dispose();
 
-            ArrayPool<byte>.Shared.Return(imageDataBuffer);
+            try
+            {
+                ArrayPool<byte>.Shared.Return(imageDataBuffer);
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             return new EmptyResult();
         }

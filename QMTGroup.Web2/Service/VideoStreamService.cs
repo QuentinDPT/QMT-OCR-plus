@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
-using QMTGroup.Camera;
+﻿using QMTGroup.Camera;
 using QMTGroup.Image;
 using QMTGroup.ImageFilters;
 using QMTGroup.Web.Factory;

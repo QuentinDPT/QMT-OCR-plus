@@ -30,5 +30,8 @@
 		<ProjectReference Include="..\QMTGroup.Image.FFMPEG\QMTGroup.Image.FFMPEG.csproj" />
 		<ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
 		<ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay.Dxf\QMTGroup.Overlay.Dxf.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay.Svg\QMTGroup.Overlay.Svg.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay\QMTGroup.Overlay.csproj" />
 	</ItemGroup>
 </Project>
