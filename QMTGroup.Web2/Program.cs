@@ -1,6 +1,13 @@
+using QMTGroup.Core;
+using QMTGroup.DSL.Hub;
+using QMTGroup.DSL.Library.EmguCV;
+using QMTGroup.DSL.Library.Math;
+using QMTGroup.DSL.Library.Standard;
+using QMTGroup.DSL.Lua;
 using QMTGroup.Image.Interface;
 using QMTGroup.Web.Factory;
 using QMTGroup.Web.Service;
+using System.Reflection;
 using System.Runtime;
 
 namespace QMTGroup.Web
@@ -19,9 +26,22 @@ namespace QMTGroup.Web
             builder.Services.AddRazorPages();
 
             builder.Services.AddSignalR();
+
+            builder.Services.AddSingleton<AssemblyTypes>(_ => new(AppDomain.CurrentDomain.GetAssemblies()));
+
+            builder.Services.AddSingleton<MathLib>();
+            builder.Services.AddSingleton<StdLib>();
+            builder.Services.AddSingleton<LogLib>();
+            builder.Services.AddSingleton<EmguCVLib>();
+
+            builder.Services.AddSingleton<IResourceHub, ResourceHub>();
+            builder.Services.AddSingleton<DSLLuaEngine>();
+            builder.Services.AddSingleton<DSLLuaLibraryFactory>();
+
             builder.Services.AddSingleton<VideoStreamService>();
             builder.Services.AddSingleton<ICameraFactory, CameraFactory>();
             builder.Services.AddSingleton<IJpegConverter, Image.EmguCV.CodecConverter>();
+            builder.Services.AddSingleton<OverlayService>();
             builder.Services.AddSingleton<CodeStorageService>();
 
             builder.Logging.ClearProviders(); // Désactive tous les loggers

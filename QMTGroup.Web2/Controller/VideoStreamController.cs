@@ -3,7 +3,6 @@ using Emgu.CV;
 using Microsoft.AspNetCore.Mvc;
 using QMTGroup.Image;
 using QMTGroup.Web.Service;
-using SixLabors.ImageSharp;
 using QMTGroup.Image.Interface;
 using QMTGroup.Urn;
 using System.Text.Json;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using QMTGroup.Web.Service;
 
 namespace QMTGroup.Web.Controller;
 
@@ -6,10 +7,17 @@ namespace QMTGroup.Web.Controller;
 [ApiController]
 public class OverlayController : ControllerBase
 {
-    [HttpGet]
-    public IActionResult FromDxf(string dxfPath = @"C:\Users\quentin.de-potter\Dev\PERSO\QMT-OCR-plus\QMTGroup.Web2\wwwroot\img\input.dxf")
+    private readonly OverlayService _overlayService;
+
+    public OverlayController(OverlayService overlayService)
     {
-        var svgBytes = new Service.OverlayService().SvgFromDxf(dxfPath);
+        _overlayService = overlayService;
+    }
+
+    [HttpGet]
+    public IActionResult FromDxf(string dxfName = "input")
+    {
+        var svgBytes = _overlayService.SvgFromDxf(dxfName);
 
         return Content(svgBytes, "image/svg+xml", System.Text.Encoding.UTF8);
     }

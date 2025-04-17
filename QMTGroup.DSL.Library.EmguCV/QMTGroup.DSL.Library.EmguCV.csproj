@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+
+    <ItemGroup>
+	    <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\QMTGroup.DSL.Hub\QMTGroup.DSL.Hub.csproj" />
+      <ProjectReference Include="..\QMTGroup.DSL.Library\QMTGroup.DSL.Library.csproj" />
+      <ProjectReference Include="..\QMTGroup.Image.EmguCV\QMTGroup.Image.EmguCV.csproj" />
+      <ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
+    </ItemGroup>
+</Project>

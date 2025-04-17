@@ -4,7 +4,7 @@ using QMTGroup.Web.Service;
 
 namespace QMTGroup.Web.Controller;
 
-[Route("api/[controller]")]
+[Route("api/[controller]88")]
 [ApiController]
 public class CodeController : ControllerBase
 {

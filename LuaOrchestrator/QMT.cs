@@ -55,11 +55,6 @@ public static class QMT
         return reference;
     }
 
-    public static void ClientCommand(string jsCommand)
-    {
-
-    }
-
     public static void Wait(int time_in_ms)
     {
         Thread.Sleep(time_in_ms);

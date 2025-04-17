@@ -15,7 +15,7 @@ public class CodeStorageService
         {
             return _codeStorage[id];
         }
-        return "require QMT\n\n-- je le préviens\nQMT.LogWarning(\"Attention a toi\")\n\nQMT.LogInfo(\"Oui, tkt\")\n\nQMT.LogError(\"AAARRRHHH\")\n\nimage = QMT.GetImage()\n\nQMT.LogInfo(\"Voici mon image \" .. image)\n\nQMT.DisplayImage(image)";
+        return "function init()\r\n  print(\"Hello world !\")\r\nend\r\n\r\nfunction execute()\r\n  \r\nend";
     }
 
     public void SaveCode(string id, string code)
