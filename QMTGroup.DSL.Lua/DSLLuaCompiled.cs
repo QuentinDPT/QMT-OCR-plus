@@ -1,14 +1,18 @@
-﻿namespace QMTGroup.DSL.Lua;
+﻿using Microsoft.Extensions.Logging;
+
+namespace QMTGroup.DSL.Lua;
 
 public class DSLLuaCompiled : IDisposable
 {
     private readonly DSLLuaEngine _engine;
+    private readonly ILogger _engineLogger;
 
     public required string Name { get; init; }
 
-    public DSLLuaCompiled(DSLLuaEngine engine)
+    public DSLLuaCompiled(DSLLuaEngine engine, ILogger engineLogger)
     {
         _engine = engine;
+        _engineLogger = engineLogger;
     }
 
     public void Initialize()
@@ -28,6 +32,13 @@ public class DSLLuaCompiled : IDisposable
 
     public void Invoke()
     {
-        (_engine.Engine["main"] as NLua.LuaFunction)?.Call();
+        try
+        {
+            (_engine.Engine["main"] as NLua.LuaFunction)?.Call();
+        } catch(Exception ex)
+        {
+            _engineLogger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using QMTGroup.DSL.Core;
+﻿using Microsoft.Extensions.Logging;
+using QMTGroup.DSL.Core;
 using QMTGroup.DSL.Library;
 using System.Text.RegularExpressions;
 
@@ -12,16 +13,18 @@ namespace QMTGroup.DSL.Lua
         private readonly List<DSLLuaCompiled> _compiledScripts = new();
 
         private readonly DSLLuaLibraryFactory _libFactory;
+        private readonly ILogger<DSLLuaEngine> _engineLogger;
 
         private NLua.Lua _engine;
 
         internal NLua.Lua Engine => _engine;
 
-        public DSLLuaEngine(DSLLuaLibraryFactory libFactory)
+        public DSLLuaEngine(DSLLuaLibraryFactory libFactory, ILogger<DSLLuaEngine> engineLogger)
         {
             _engine = new();
 
             _libFactory = libFactory;
+            _engineLogger = engineLogger;
 
             Clear();
         }
@@ -56,7 +59,7 @@ namespace QMTGroup.DSL.Lua
                 _engine.DoString(mainCode);
             }
 
-            DSLLuaCompiled compiled = new DSLLuaCompiled(this)
+            DSLLuaCompiled compiled = new DSLLuaCompiled(this, _engineLogger)
             {
                 Name = script.Name,
             };

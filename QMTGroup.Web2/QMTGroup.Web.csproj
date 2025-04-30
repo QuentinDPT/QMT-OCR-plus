@@ -22,6 +22,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\LuaOrchestrator\LuaOrchestrator.csproj" />
+		<ProjectReference Include="..\PluginBidon\PluginBidon.csproj" />
 		<ProjectReference Include="..\QMTGroup.Camera.EmguCV\QMTGroup.Camera.EmguCV.csproj" />
 		<ProjectReference Include="..\QMTGroup.Camera.File\QMTGroup.Camera.File.csproj" />
 		<ProjectReference Include="..\QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj" />

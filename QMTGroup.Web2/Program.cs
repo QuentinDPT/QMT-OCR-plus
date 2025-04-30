@@ -1,3 +1,4 @@
+using PluginBidon;
 using QMTGroup.Core;
 using QMTGroup.DSL.Hub;
 using QMTGroup.DSL.Library.EmguCV;
@@ -30,6 +31,7 @@ namespace QMTGroup.Web
             builder.Services.AddSingleton<AssemblyTypes>(_ => new(AppDomain.CurrentDomain.GetAssemblies()));
 
             builder.Services.AddSingleton<MathLib>();
+            builder.Services.AddSingleton<FeatureBidonPlugin>();
             builder.Services.AddSingleton<StdLib>();
             builder.Services.AddSingleton<LogLib>();
             builder.Services.AddSingleton<EmguCVLib>();
