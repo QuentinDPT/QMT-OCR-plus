@@ -32,11 +32,11 @@ public class Code2Controller : ControllerBase
             var script = new DSLLuaScript(id);
             script.ExecutionScript = _codeStorageService.GetCode(id);
 
+            _engine.Clear();
+
             var scriptCompiled = _engine.Compile(script);
 
-            scriptCompiled.Initialize();
-
-            scriptCompiled.Execute();
+            scriptCompiled.Invoke();
 
             return Ok();
         }

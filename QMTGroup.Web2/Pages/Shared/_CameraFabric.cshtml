@@ -1,0 +1,201 @@
+﻿@{
+    var domId = Guid.NewGuid();
+}
+<script src="https://cdn.jsdelivr.net/npm/fabric@latest/dist/index.min.js"></script>
+
+<style>
+    canvas {
+        display: block;
+    }
+</style>
+
+<div id="wrapper-@domId" class="w-100 h-100 background-pattern position-relative">
+    <img class="position-absolute" id="img-@domId" />
+    <div id="svg-@domId" class="w-100 h-100 position-absolute overflow-hidden"></div>
+    <canvas id="c-@domId" class="w-100 h-100"></canvas>
+</div>
+
+<script>
+    var context = document.getElementById("wrapper-@domId");
+    const svgContext = document.getElementById("svg-@domId");
+
+    // Fonction pour redimensionner le canvas
+    function resizeCanvas(canvas)
+    {
+        let rect = context.getBoundingClientRect();
+        canvas.setWidth(rect.width);
+        canvas.setHeight(rect.height);
+        canvas.renderAll();
+    }
+
+    // Créer le canvas Fabric
+    const canvas = new fabric.Canvas('c-@domId', {
+        selection: false,
+    });
+
+    // Redimensionner à l'initialisation
+    resizeCanvas(canvas);
+
+    // Redimensionner quand la fenêtre change de taille
+    window.addEventListener('resize', () => resizeCanvas(canvas));
+
+    window.addEventListener("load", function(e){
+        $.ajax({
+            url: "https://localhost:7083/api/overlay",
+            type: "GET",
+            success: function(e){
+                const requestId = "requestuuu";
+                const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                svgElement.setAttribute('viewBox',
+                    e.documentElement.viewBox.baseVal.x + ", " + e.documentElement.viewBox.baseVal.y + ", " +
+                    e.documentElement.viewBox.baseVal.width + ", " + e.documentElement.viewBox.baseVal.height);
+                svgElement.setAttribute('width',
+                    e.documentElement.viewBox.baseVal.width);
+                svgElement.setAttribute('height',
+                    e.documentElement.viewBox.baseVal.height);
+
+                svgElement.innerHTML = e.activeElement.innerHTML;
+
+
+                svgElement.id = requestId;
+
+                const svgText = svgElement.outerHTML;
+
+                svgContext.innerHTML += svgText;
+
+                const rect = new fabric.Rect({
+                    left: 0,
+                    top: 0,
+                    opacity: 0,
+                    width: e.documentElement.viewBox.baseVal.width,
+                    height: e.documentElement.viewBox.baseVal.height,
+                    angle: 0,
+                    hasControls: true,
+                    hasBorders: true,
+                    lockUniScaling: true,
+                    lockScalingFlip: true,
+                });
+
+                // 🔧 Désactiver les poignées latérales
+                rect.setControlsVisibility({
+                  mt: false, // middle top
+                  mb: false, // middle bottom
+                  ml: false, // middle left
+                  mr: false, // middle right
+                  tl: true,  // top left
+                  tr: true,  // top right
+                  bl: true,  // bottom left
+                  br: true   // bottom right
+                });
+
+                addFabricObjectEvenements(rect, document.getElementById(requestId));
+
+                canvas.add(rect);
+            }
+        });
+
+        document.getElementById("img-@domId").src = "/mjpeg-stream";
+    });
+
+    function lockFabricCanvas(c) {
+        c.getObjects().forEach(obj => {
+            if(obj._originalState == null){
+                obj._originalState = {
+                    selectable: obj.selectable,
+                    evented: obj.evented,
+                    hasControls: obj.hasControls,
+                    lockMovementX: obj.lockMovementX,
+                    lockMovementY: obj.lockMovementY,
+                    lockRotation: obj.lockRotation,
+                    lockScalingX: obj.lockScalingX,
+                    lockScalingY: obj.lockScalingY
+                };
+            }
+
+            obj.set({
+                selectable: false,
+                evented: false,
+                hasControls: false,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockRotation: true,
+                lockScalingX: true,
+                lockScalingY: true
+            });
+        });
+        c.discardActiveObject(); // désélectionner tout
+        c.renderAll();
+    }
+
+    function unlockFabricCanvas(c) {
+        c.getObjects().forEach(obj => {
+            if(obj._originalState == null){
+                obj.set({
+                    selectable: true,
+                    evented: true,
+                    hasControls: true,
+                    lockMovementX: false,
+                    lockMovementY: false,
+                    lockRotation: false,
+                    lockScalingX: false,
+                    lockScalingY: false
+                });
+            }else{
+                obj.set({
+                    selectable: obj._originalState.selectable,
+                    evented: obj._originalState.evented,
+                    hasControls: obj._originalState.hasControls,
+                    lockMovementX: obj._originalState.lockMovementX,
+                    lockMovementY: obj._originalState.lockMovementY,
+                    lockRotation: obj._originalState.lockRotation,
+                    lockScalingX: obj._originalState.lockScalingX,
+                    lockScalingY: obj._originalState.lockScalingY
+                });
+            }
+        });
+        c.renderAll();
+    }
+
+
+    function addFabricObjectEvenements(obj, domRepresentation){
+        var applyTransformations = function(obj, transformations){
+            obj._domRepresentation.style = `
+                transform-origin: top left;
+                transform: translate(${transformations.left}px, ${transformations.top}px) rotate(${transformations.angle}deg);`;
+            obj._domRepresentation.setAttribute("width", transformations.width * transformations.scaleX);
+            obj._domRepresentation.setAttribute("height", transformations.height * transformations.scaleY);
+        }
+
+        obj._domRepresentation = domRepresentation;
+
+        // ➤ Déplacement (drag/move)
+        obj.on('moving', function(e) {
+          applyTransformations(e.transform.target, e.transform.target);
+        });
+
+        // ➤ Redimensionnement (scaling)
+        obj.on('scaling', function(e) {
+          applyTransformations(e.transform.target, e.transform.target);
+        });
+
+        // ➤ Rotation
+        obj.on('rotating', function(e) {
+          applyTransformations(e.transform.target, e.transform.target);
+        });
+
+        // ➤ Une fois la modification terminée (drag, resize, rotate)
+        obj.on('modified', function(e) {
+          console.log('Modification terminée :', {
+            left: e.target.left,
+            top: e.target.top,
+            angle: e.target.angle,
+            scaleX: e.target.scaleX,
+            scaleY: e.target.scaleY,
+            target: e.target
+          });
+
+          applyTransformations(e.target, e.target);
+        });
+    }
+</script>

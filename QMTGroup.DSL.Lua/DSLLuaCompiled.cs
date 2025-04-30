@@ -25,4 +25,9 @@ public class DSLLuaCompiled : IDisposable
     {
         _engine.Engine[Name] = null;
     }
+
+    public void Invoke()
+    {
+        (_engine.Engine["main"] as NLua.LuaFunction)?.Call();
+    }
 }

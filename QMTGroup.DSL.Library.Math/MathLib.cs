@@ -174,7 +174,7 @@ public partial class MathLib : IDSLLibrary
     public decimal Round(decimal x) => System.Math.Round(x);
 
     [DSLFunction]
-    public decimal Round(decimal x, int decimals) => System.Math.Round(x, decimals);
+    public decimal Round(decimal x, int? decimals = null) => decimals is null ? System.Math.Round(x) : System.Math.Round(x, (int)decimals);
 
     [DSLFunction]
     public double Round(double x) => System.Math.Round(x);

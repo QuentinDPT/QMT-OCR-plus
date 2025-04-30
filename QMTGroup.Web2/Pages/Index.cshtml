@@ -3,90 +3,7 @@
 @{
     ViewData["Title"] = "Home page";
 }
-@section Styles {
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin="" />
-    <style>
-        .leaflet-container {
-            background-color: white !important;
-        }
-        .leaflet-image-layer {
-            image-rendering: pixelated;
-        }
-    </style>
-}
 @section Scripts {
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-                              integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-                              crossorigin="">
-    </script>
-
-    <!-- Leaflet -->
-    <script>
-        var imgWidth = 640;  // Largeur de l'image en pixels
-        var imgHeight = 480; // Hauteur de l'image en pixels
-        var imgUrl = "/mjpeg-stream"; // Remplace par ton flux MJPEG
-
-        // Convertir la taille de l'image en coordonnées Leaflet
-        var pixelToLatLng = 0.0005; // Ajuste ce facteur si nécessaire
-        var halfWidth = (imgWidth / 2) * pixelToLatLng;
-        var halfHeight = (imgHeight / 2) * pixelToLatLng;
-
-        // Définir les limites de la carte en fonction de l'image
-        var bounds = [
-            [-halfHeight, -halfWidth], // Coin bas-gauche
-            [halfHeight, halfWidth]    // Coin haut-droit
-        ];
-
-        // Initialiser la carte
-        var map = L.map('map', {
-            center: [0, 0], // Centre exact en (0,0)
-            zoom: 12, // Zoom de départ
-            minZoom: 11, // Zoom minimum autorisé
-            maxZoom: 25, // Zoom maximum
-            maxBounds: bounds, // Empêche l'utilisateur de sortir
-            maxBoundsViscosity: .9, // Force la carte à rester dans les limites
-            zoomAnimation: false,
-            fadeAnimation: false,
-            markerZoomAnimation: false,
-            zoomSnap: 0.01,
-            zoomDelta: 0.01,
-            zoomControl: false
-        });
-
-        map.attributionControl.setPrefix(false);
-        map.removeControl(map.attributionControl);
-
-        var imageOverlay = {};
-        window.addEventListener("load", function(e){
-            // Ajouter l'image MJPEG en tant qu'overlay
-            imageOverlay = L.imageOverlay(imgUrl, bounds).addTo(map);
-        });
-
-        // Ajuster la vue pour afficher toute l'image
-        map.fitBounds(bounds);
-
-        $.ajax({
-            url: "https://localhost:7083/api/overlay",
-            type: "GET",
-            success: function(e){
-                const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-                svgElement.setAttribute('viewBox',
-                    e.documentElement.viewBox.baseVal.x + ", " + e.documentElement.viewBox.baseVal.y + ", " +
-                    e.documentElement.viewBox.baseVal.width + ", " + e.documentElement.viewBox.baseVal.height);
-                
-                svgElement.innerHTML = e.activeElement.innerHTML;
-
-                L.svgOverlay(svgElement, bounds, {
-                    opacity: 1,
-                    interactive: true
-                }).addTo(map);
-            }
-        })
-    </script>
-
     @* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script> *@
 
 @*<!-- BASE64 STREAM -->
@@ -213,7 +130,6 @@
                     type: 'POST',
                     success: function(){
                         cameraStarted = false;
-                        imageOverlay.setOpacity(0);
                         document.getElementById("ONOFF").disabled = false;
                         document.getElementById("ONOFF").className = "btn btn-primary mb-1 w-100 text-start";
                         document.getElementById("ONOFF").innerHTML = "Démarrer";
@@ -228,9 +144,8 @@
                     type: 'POST',
                     success: function(){
                         cameraStarted = true;
-                        imageOverlay.setOpacity(1);
                         document.getElementById("ONOFF").disabled = false;
-                        document.getElementById("ONOFF").className = "btn btn-danger mb-1 w-100 text-start";
+                        document.getElementById("ONOFF").className = "btn btn-danger w-100 text-start";
                         document.getElementById("ONOFF").innerHTML = "Stop";
                     },
                     error: function(){
@@ -284,50 +199,48 @@
     *@
 }
 
-<div class="container-xxl">
-    <div class="row">
-        <div class="col-12 col-lg-9">
-            <h1>Flux Vidéo</h1>
-            <div class="w-100" style="aspect-ratio: 640/480;">
-                <div id="map" style="width:100%;height:100%"></div>
+<div class="m-0 h-100-max h-100">
+    <div class="container m-0 p-0 w-100 h-100 w-100-min">
+        <div class="d-flex m-0 p-0 h-100 w-100">
+            <div class="col-8 p-0">
+                @await Html.PartialAsync("_CameraFabric")
             </div>
-        </div>
-        <div class="col-12 col-lg-3">
-            <div class="d-flex flex-column">
-                <h1>Contrôles</h1>
-                <table>
-                    <thead></thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <select id="CAM" class="form-select mb-1 w-100 text-start" aria-label="Default select example">
-                                    <option selected>None</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button id="ONOFF" class="btn btn-primary mb-1 w-100 text-start">Démarrer/Arreter</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button id="STD" class="btn btn-outline-secondary mb-1 w-100 text-start">Source</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button id="MD1" class="btn btn-outline-secondary mb-1 w-100 text-start">Nuances de gris</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="d-flex">
-                                <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
-                                <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="col-4 p-0">
+                <div class="d-flex flex-column">
+                    <table>
+                        <thead></thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select id="CAM" class="form-select w-100 text-start" aria-label="Default select example">
+                                        <option selected>None</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="ONOFF" class="btn btn-primary w-100 text-start">Démarrer/Arreter</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="STD" class="btn btn-outline-secondary w-100 text-start">Source</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="MD1" class="btn btn-outline-secondary w-100 text-start">Nuances de gris</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="d-flex">
+                                    <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
+                                    <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

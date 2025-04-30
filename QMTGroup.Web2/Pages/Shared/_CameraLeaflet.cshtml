@@ -1,0 +1,107 @@
+﻿@{
+    var domId = Guid.NewGuid();
+}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="" />
+<style>
+    .leaflet-container {
+        background-color: white !important;
+    }
+
+    .leaflet-image-layer {
+        image-rendering: pixelated;
+    }
+</style>
+
+<div class="w-100 h-100">
+    <div id="map-@domId" class="background-pattern w-100 h-100"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin="">
+</script>
+<!-- Leaflet -->
+<script>
+    var imgWidth = 640;  // Largeur de l'image en pixels
+    var imgHeight = 480; // Hauteur de l'image en pixels
+    var imgUrl = "/mjpeg-stream"; // Remplace par ton flux MJPEG
+
+    // Convertir la taille de l'image en coordonnées Leaflet
+    var pixelToLatLng = 0.0005; // Ajuste ce facteur si nécessaire
+    var halfWidth = (imgWidth / 2) * pixelToLatLng;
+    var halfHeight = (imgHeight / 2) * pixelToLatLng;
+
+    // Définir les limites de la carte en fonction de l'image
+    var bounds = [
+        [-halfHeight, -halfWidth], // Coin bas-gauche
+        [halfHeight, halfWidth]    // Coin haut-droit
+    ];
+
+    // Initialiser la carte
+    var map = L.map('map-@domId', {
+        center: [0, 0], // Centre exact en (0,0)
+        zoom: 12, // Zoom de départ
+        minZoom: 11, // Zoom minimum autorisé
+        maxZoom: 25, // Zoom maximum
+        maxBounds: bounds, // Empêche l'utilisateur de sortir
+        maxBoundsViscosity: .9, // Force la carte à rester dans les limites
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false,
+        zoomSnap: 0.01,
+        zoomDelta: 0.01,
+        zoomControl: false
+    });
+
+    map.attributionControl.setPrefix(false);
+    map.removeControl(map.attributionControl);
+
+    var imageOverlay = {};
+    window.addEventListener("load", function(e){
+        $.ajax({
+            url: "https://localhost:7083/api/overlay",
+            type: "GET",
+            success: function(e){
+                const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+                svgElement.setAttribute('viewBox',
+                    e.documentElement.viewBox.baseVal.x + ", " + e.documentElement.viewBox.baseVal.y + ", " +
+                    e.documentElement.viewBox.baseVal.width + ", " + e.documentElement.viewBox.baseVal.height);
+
+                svgElement.innerHTML = e.activeElement.innerHTML;
+
+                L.svgOverlay(svgElement, bounds, {
+                    opacity: 1,
+                    interactive: true
+                }).addTo(map);
+            }
+        });
+    });
+    window.addEventListener("load", function(e){
+        // Ajouter l'image MJPEG en tant qu'overlay
+        imageOverlay = L.imageOverlay(imgUrl, bounds).addTo(map);
+        imageOverlay.once('load', function () {
+            const img = imageOverlay.getElement();
+
+            // Initial dimensions
+            console.log('Initial size:', img.naturalWidth, 'x', img.naturalHeight);
+
+            // Observer qui détecte tout changement de taille
+            const resizeObserver = new ResizeObserver(entries => {
+              for (let entry of entries) {
+                const newWidth = entry.target.naturalWidth;
+                const newHeight = entry.target.naturalHeight;
+
+                console.log('Image size changed:', newWidth, 'x', newHeight);
+              }
+            });
+
+            resizeObserver.observe(img);
+        });
+    });
+
+    // Ajuster la vue pour afficher toute l'image
+    map.fitBounds(bounds);
+</script>
