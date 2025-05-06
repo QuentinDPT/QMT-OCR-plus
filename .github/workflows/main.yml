@@ -1,0 +1,36 @@
+name: Publish Plugins
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run publish script
+        run: python ./Devops/publish_plugins.py
+
+      - name: Create Git tag
+        run: |
+          $file = Get-ChildItem -Path "./Devops/assets" -Filter "*.vplug" | Select-Object -First 1
+          if ($file -and $file.Name -match "^([^\_]+)_") {
+              VERSION = $matches[1]
+              Write-Output "Fichier trouvé : $($file.Name)"
+              Write-Output "Version extraite : $version"
+          }
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a v$VERSION -m "Automated release v$VERSION"
+          git push origin v$VERSION
+
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          files: ./Devops/assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
