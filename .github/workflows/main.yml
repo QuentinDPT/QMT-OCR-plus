@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Run publish script
-        run: python ./Devops/publish_plugins.py
+        run: python Devops/publish_plugins.py
 
       - name: Create Git tag
         run: |
