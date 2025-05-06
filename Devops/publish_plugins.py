@@ -168,6 +168,6 @@ def main(solution_path, reference_csproj):
         shutil.rmtree(tmp_dir)
 
 if __name__ == "__main__":
-    solution_path = "../QMTGroup.sln"
-    reference_csproj = "../QMTGroup.Camera/QMTGroup.Camera.csproj"
+    solution_path = "./QMTGroup.sln"
+    reference_csproj = "./QMTGroup.Camera/QMTGroup.Camera.csproj"
     main(solution_path, reference_csproj)
