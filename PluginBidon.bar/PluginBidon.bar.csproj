@@ -6,9 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\PluginBidon.foo\PluginBidon.foo.csproj" />
-    <ProjectReference Include="..\QMTGroup.DSL.Library\QMTGroup.DSL.Library.csproj" />
-  </ItemGroup>
-
 </Project>
