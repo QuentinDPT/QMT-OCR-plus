@@ -9,6 +9,9 @@ jobs:
     runs-on: [self-hosted, python]
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
       - name: Run publish script
         run: python Devops/publish_plugins.py
 
