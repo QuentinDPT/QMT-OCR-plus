@@ -17,7 +17,7 @@ jobs:
 
       - name: Create Git tag
         run: |
-          $file = Get-ChildItem -Path "./Devops/assets" -Filter "*.vplug" | Select-Object -First 1
+          $file = Get-ChildItem -Path "./assets" -Filter "*.vplug" | Select-Object -First 1
           if ($file -and $file.Name -match "^([^\_]+)_") {
               VERSION = $matches[1]
               Write-Output "Fichier trouvé : $($file.Name)"
@@ -34,6 +34,6 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
-          files: ./Devops/assets/*
+          files: ./assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
