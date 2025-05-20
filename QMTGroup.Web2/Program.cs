@@ -38,25 +38,35 @@ namespace QMTGroup.Web
 
             builder.Services.AddSignalR();
 
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddSingleton<AssemblyTypes>(_ => new(AppDomain.CurrentDomain.GetAssemblies()));
 
             builder.Services.AddPluginFromConfiguration(configuration);
 
-            builder.Services.AddSingleton<StdLib>(x => new(x.GetService<IUserLogger>()));
+            builder.Services.AddScoped<StdLib>();
+            builder.Services.AddScoped<LogLib>();
+            builder.Services.AddSingleton<TimeLib>();
             builder.Services.AddSingleton<MathLib>();
-            builder.Services.AddSingleton<LogLib>(x => new(x.GetService<IMemoryLogger>()));
             builder.Services.AddSingleton<StringLib>();
 
             builder.Services.AddSingleton<EmguCVLib>();
 
-            builder.Services.AddSingleton<IUserLogger, WebLogger.WebLogger>();
-            builder.Services.AddSingleton<IMemoryLogger, WebLogger.WebLogger>();
-            builder.Services.AddSingleton<IPopUpLogger, WebPopUp>();
-            builder.Services.AddSingleton<IToasterLogger, WebToaster>();
+            builder.Services.AddScoped<IWebLogger>(provider =>
+            {
+                var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+                var httpContext = httpContextAccessor.HttpContext;
+                if (httpContext != null)
+                {
+                    return new WebLogger.WebLogger(httpContext.Response.Body);
+                }
+                throw new InvalidOperationException("HTTP context is not available.");
+            });
+            builder.Services.AddSingleton<IMemoryLogger, MemoryLoggerStub>();
 
             builder.Services.AddSingleton<IResourceHub, ResourceHub>();
-            builder.Services.AddSingleton<DSLLuaEngine>();
-            builder.Services.AddSingleton<DSLLuaLibraryFactory>();
+            builder.Services.AddScoped<DSLLuaEngine>();
+            builder.Services.AddScoped<DSLLuaLibraryFactory>();
 
             builder.Services.AddSingleton<VideoStreamService>();
             builder.Services.AddSingleton<ICameraFactory, CameraFactory>();

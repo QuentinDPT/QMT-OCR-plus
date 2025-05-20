@@ -29,8 +29,14 @@ namespace QMTGroup.DSL.Lua
             Clear();
         }
 
-        public DSLLuaCompiled Compile(DSLLuaScript script)
+        public DSLLuaCompiled Compile(DSLLuaScript script) => Compile(script, _engineLogger);
+
+        public DSLLuaCompiled Compile(DSLLuaScript script, ILogger logger)
         {
+            script = _translateKeywords(script);
+
+            _addLibrary("stdLib");
+
             using (var c = _compiledScripts.SingleOrDefault(x => x.Name == script.Name)) {
                 if (c is not null)
                 {
@@ -47,7 +53,7 @@ namespace QMTGroup.DSL.Lua
                 string mainCode = "__initialized = false\r\nfunction main()\r\n";
 
                 if (_engine["init"] is not null) {
-                    mainCode += "\tif not __initialized then\r\n\t\tinit()\r\n\t\t__initialized = true\r\n\tend";
+                    mainCode += "\tif not __initialized then\r\n\t\tinit()\r\n\t\t__initialized = true\r\n\tend\r\n";
                 }
 
                 if (_engine["execute"] is not null) {
@@ -59,12 +65,40 @@ namespace QMTGroup.DSL.Lua
                 _engine.DoString(mainCode);
             }
 
-            DSLLuaCompiled compiled = new DSLLuaCompiled(this, _engineLogger)
+            DSLLuaCompiled compiled = new DSLLuaCompiled(this, logger)
             {
                 Name = script.Name,
             };
             _compiledScripts.Add(compiled);
             return compiled;
+        }
+
+        private DSLLuaScript _translateKeywords(DSLLuaScript script)
+        {
+            string[] executionScript = script.ExecutionScript.Split('\n');
+
+            string lastFunctionName = "unknown";
+
+            string executionPostTreatment = "";
+
+            for (int i = 0; i<executionScript.Length; i++)
+            {
+                Match match = Regex.Match(executionScript[i], @"function\s+(\w+)\s*\(");
+
+                if (match.Success)
+                    lastFunctionName = match.Groups[1].Value;
+
+                executionScript[i] = executionScript[i].Replace("STACKTRACE_DOCNAME", $"\"{script.Name}\"");
+                executionScript[i] = executionScript[i].Replace("STACKTRACE_FUNCNAME", $"\"{lastFunctionName}\"");
+                executionScript[i] = executionScript[i].Replace("STACKTRACE_LINENUMBER", $"\"{i+1}\"");
+
+                executionPostTreatment += executionScript[i] + "\n";
+            }
+
+            return new DSLLuaScript(script.Name)
+            {
+                ExecutionScript = executionPostTreatment
+            };
         }
 
         /// <summary>
@@ -118,8 +152,6 @@ namespace QMTGroup.DSL.Lua
         {
             _engine.Dispose();
             _engine = new NLua.Lua();
-
-            _addLibrary("stdLib");
         }
 
         public void Dispose()
