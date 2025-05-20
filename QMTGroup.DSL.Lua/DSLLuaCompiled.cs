@@ -37,7 +37,6 @@ public class DSLLuaCompiled : IDisposable
             (_engine.Engine["main"] as NLua.LuaFunction)?.Call();
         } catch(Exception ex)
         {
-            _engineLogger.LogError(ex, ex.Message);
             throw;
         }
     }

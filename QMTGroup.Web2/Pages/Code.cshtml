@@ -6,6 +6,9 @@
 @section Styles {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material%20Symbols%20Outlined:opsz,wght,FILL,GRAD@20,100,1,200&icon_names=drag_indicator,favorite,home,play_arrow,search,settings,stop,terminal" rel="stylesheet" />
+
     <style>
         #editor {
             border: 1px solid #ccc;
@@ -57,199 +60,66 @@
             background: purple;
         }
         </style>
+    <style>
+        #scriptLogResultArea > * {
+            padding-left:.8em;
+        }
+
+        #executionButton {
+            color: green;
+        }
+
+            #executionButton:disabled {
+                color: gray;
+            }
+
+        #stopButton {
+            color: red;
+        }
+
+            #stopButton:disabled {
+                color: gray;
+            }
+
+        .log-Trace {
+            color: gray;
+        }
+
+        .log-Debug {
+            color: deepskyblue;
+        }
+
+        .log-Information {
+            color: black;
+        }
+
+        .log-Error, .log-Critical {
+            background: red;
+            color: white;
+        }
+
+        .log-Critical{
+            font-weight: bold;
+        }
+
+        .log-Warning {
+            color: orange;
+        }
+
+    </style>
 }
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/addon/hint/show-hint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/lua/lua.js"></script>
-    <script>
-        var documentName = "MonDoc";
-        var codeHasChanged = false;
 
-        document.getElementById("docName").addEventListener("input", function(event) {
-          documentName = event.target.value;
-          codeHasChanged = true;
-        });
-        document.getElementById("docName").value = documentName;
-
-        const luaKeywords = [
-            "and", "break", "do", "else", "elseif", "end", "false",
-            "for", "function", "if", "in", "local", "nil", "not",
-            "or", "repeat", "return", "then", "true", "until", "while",
-            "print", "pairs", "ipairs", "math", "table", "string", "require"
-        ];
-
-        function addGutterMarker(line, text) {
-            var marker = document.createElement("div");
-            marker.className = "custom-marker";
-            marker.innerHTML = text;
-            editor.setGutterMarker(line, "custom-gutter", marker);
-        }
-
-        function clearGutterMarker(){
-            editor.clearGutter("custom-gutter");
-        }
-
-        function executeCode(){
-            document.getElementById("executionButton").disabled = true;
-            clearGutterMarker();
-
-            document.getElementById("infoPanel").innerHTML = "";
-
-
-            for(let i = 0; i < editor.lineCount() ; i++){
-                document.getElementById("infoPanel").innerHTML += "<div data-toggle=\"tooltip\" data-placement=\"top\" style='width:0'></div>";
-            }
-
-            $.ajax({
-                url: 'api/code/execute/' + documentName, // API endpoint
-                type: 'GET', // Méthode HTTP POST
-                contentType: 'application/json; charset=UTF-8', // Type de contenu
-                success: function(response) {
-                    var totalExecution = 0;
-                    var cumulativeOffset = 0;
-                    for(i of response){
-                        totalExecution += i.executionDuration;
-                    }
-                    for(i of response){
-                        let time = "";
-                        if(i.executionDuration > 0){
-                            if(i.executionDuration > 10000000){
-                                time = (Math.floor(i.executionDuration / 10000)/1000).toFixed(2) + " s";
-                            }else{
-                                time = (Math.floor(i.executionDuration / 100)/100).toFixed(2) + "ms";
-                            }
-
-                            document.getElementById("infoPanel").children[i.lineIndex].style = "margin-left:" + cumulativeOffset + "%; width:" + (i.executionDuration/totalExecution*100) + "%";
-                            document.getElementById("infoPanel").children[i.lineIndex].title = time;
-
-                            cumulativeOffset += i.executionDuration/totalExecution*100;
-
-                            addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + time + "\">✔️</span>");
-                        }else{
-                            if(i.warning != null){
-                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.warning + "\">⚠️</span>");
-                            }else{
-                                addGutterMarker(i.lineIndex, " ");
-                            }
-                        }
-                    }
-
-                    document.getElementById("executionButton").disabled = false;
-                },
-                error: function(error) {
-                    var response = error.responseJSON;
-                    for(i of response){
-                        let time = "";
-                        if(i.executionDuration > 0){
-                            if(i.executionDuration > 10000000){
-                                time = (Math.floor(i.executionDuration / 10000)/1000).toFixed(2) + " s";
-                            }else{
-                                time = (Math.floor(i.executionDuration / 100)/100).toFixed(2) + "ms";
-                            }
-
-                            addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + time + "\">✔️</span>");
-                        }else{
-                            addGutterMarker(i.lineIndex, " ");
-
-                            if(i.warning != null){
-                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.warning + "\">⚠️</span>");
-                            }
-
-                            if(i.error != null){
-                                addGutterMarker(i.lineIndex, "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"" + i.error + "\">❌</span>");
-                            }
-                        }
-                    }
-
-                    document.getElementById("executionButton").disabled = false;
-                }
-            });
-        }
-
-        document.getElementById("executionButton").onclick = executeCode;
-
-        var personnalKeywords = [ ];
-
-        function luaHint(editor) {
-            const cursor = editor.getCursor();
-            const token = editor.getTokenAt(cursor);
-            const start = token.start;
-            const end = cursor.ch;
-            const currentWord = token.string;
-
-            const suggestions = [...luaKeywords, ...personnalKeywords].filter(kw => kw.startsWith(currentWord) && kw != currentWord);
-
-            return {
-                list: suggestions,
-                from: CodeMirror.Pos(cursor.line, start),
-                to: CodeMirror.Pos(cursor.line, end)
-            };
-        }
-
-        const editor = CodeMirror(document.getElementById('editor'), {
-            mode: 'text/x-lua',
-            lineNumbers: true,
-            gutters: ["CodeMirror-linenumbers", "custom-gutter"],
-            theme: 'default',
-            extraKeys: {
-                "Ctrl-Space": "autocomplete",
-                "Ctrl-Enter": executeCode
-            }
-        });
-
-        CodeMirror.registerHelper("hint", "lua", luaHint);
-
-        editor.on("inputRead", function onInput(editor, event) {
-            if (!editor.state.completionActive && event.text.length === 1) {
-                editor.showHint({
-                    hint: CodeMirror.hint.lua,
-                    completeSingle: false // Désactive l'acceptation automatique
-                });
-            }
-        });
-
-        // Tableau pour stocker les widgets (annotations de type "line widget")
-        const annotationWidgets = [];
-
-        // Fonction pour ajouter une annotation
-        function addAnnotation(line, text, above = true, className = "") {
-            // Sauvegarder la position de défilement actuelle
-            const scrollInfo = editor.getScrollInfo();
-
-            // Créer l'annotation
-            const annotation = document.createElement('div');
-            annotation.className = 'annotation ' + className;
-            annotation.textContent = text;
-
-            // Ajouter le widget
-            const widget = editor.addLineWidget(line, annotation, { above: above });
-            annotationWidgets.push(widget);
-
-            // Restaurer la position de défilement
-            editor.scrollTo(scrollInfo.left, scrollInfo.top);
-        }
-
-        function clearAnnotations() {
-            // Sauvegarder la position de défilement actuelle
-            const scrollInfo = editor.getScrollInfo();
-
-            while (annotationWidgets.length > 0) {
-                const widget = annotationWidgets.pop(); // Retirer chaque widget
-                widget.clear(); // Supprimer l'annotation
-            }
-
-            // Restaurer la position de défilement
-            editor.scrollTo(scrollInfo.left, scrollInfo.top);
-        }
-    </script>
-
+    <!-- AUTOMATIC SAVES -->
     <script>
         var codeMemory = "";
 
         var actualCodeRequirements = [];
 
-        setInterval(function(){
+        function saveCode(){
             let codeStr = editor.getValue();
 
             if(codeStr == codeMemory && !codeHasChanged)
@@ -321,32 +191,295 @@
 
             // Restaurer la position de défilement
             editor.scrollTo(scrollInfo.left, scrollInfo.top);
-        }, 400);
+        }
     </script>
 
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.key === 'Enter') {
+                executeCode();
+            }
+
+            if (event.ctrlKey && event.key === 's') {
+                event.preventDefault();
+
+                saveCode();
+            }
+        });
+
+        document.getElementById("stopButton").disabled = true;
+        var documentName = "MonDoc";
+        var codeHasChanged = false;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                new bootstrap.Tooltip(tooltipTriggerEl, {
+                    delay: { "show": 1000, "hide": 100 } // 500ms pour apparaître, 100ms pour disparaître
+                });
+            });
+        });
+
+
+        var logResultArea = document.getElementById("scriptLogResultArea");
+        logResultArea.innerHTML = "";
+
+        document.getElementById("docName").addEventListener("input", function(event) {
+          documentName = event.target.value;
+          codeHasChanged = true;
+        });
+        document.getElementById("docName").value = documentName;
+
+        const luaKeywords = [
+            "and", "break", "do", "else", "elseif", "end", "false",
+            "for", "function", "if", "in", "local", "nil", "not",
+            "or", "repeat", "return", "then", "true", "until", "while",
+            "print", "pairs", "ipairs", "math", "table", "string", "require"
+        ];
+
+        function addGutterMarker(line, text) {
+            var marker = document.createElement("div");
+            marker.className = "custom-marker";
+            marker.innerHTML = text;
+            editor.setGutterMarker(line, "custom-gutter", marker);
+        }
+
+        function clearGutterMarker(){
+            editor.clearGutter("custom-gutter");
+        }
+
+        function executeCode(){
+            document.getElementById("executionButton").disabled = true;
+
+            saveCode();
+
+            clearGutterMarker();
+
+            document.getElementById("infoPanel").innerHTML = "";
+
+            logResultArea.innerHTML = "";
+
+            for(let i = 0; i < editor.lineCount() ; i++){
+                document.getElementById("infoPanel").innerHTML += "<div data-toggle=\"tooltip\" data-placement=\"top\" style='width:0'></div>";
+            }
+
+            const controller = new AbortController();
+
+
+            function requestEnded() {
+                document.getElementById("executionButton").disabled = false;
+
+                document.getElementById("stopButton").disabled = true;
+                document.getElementById("stopButton").onclick = function(){};
+            }
+
+            document.getElementById("stopButton").onclick = function(){
+                controller.abort();
+                requestEnded();
+            };
+            document.getElementById("stopButton").disabled = false;
+
+            fetch('api/code/execute/' + documentName, {
+                method: 'GET',
+                signal: controller.signal
+            })
+                .then(response => {
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+
+                    function read() {
+                        reader.read().catch((e) => {console.error(e)}).then(({ done, value }) => {
+                            if(done)
+                            {
+                                requestEnded();
+                                return;
+                            }
+
+                            const chunk = decoder.decode(value, { stream: true });
+
+                            // Ajouter chaque ligne reçue
+                            let obj = JSON.parse("[" + chunk.replace(/,$/, '') + "]");
+                            if (obj != undefined)
+                            {
+                                for (const objitem of obj)
+                                {
+                                    if(objitem.type == "log")
+                                    {
+                                        const p = document.createElement("div");
+                                        p.innerHTML = decodeHtmlEntity(objitem.message);
+                                        p.className = "log-" + objitem.logType;
+                                        logResultArea.appendChild(p);
+                                    }
+                                }
+                            }
+                            scrollElementToBottom(logResultArea.parentElement);
+                            read(); // continuer à lire
+                        });
+                    }
+
+                    read();
+                })
+                .catch(err => {
+                    console.error(err);
+                    const p = document.createElement("div");
+                    p.textContent = err.message;
+                    p.className = "log-Critical";
+                    logResultArea.appendChild(p);
+                    requestEnded();
+                });
+
+        }
+
+        function decodeHtmlEntity(str) {
+          let txt = document.createElement("textarea");
+          txt.innerHTML = str;
+          return txt.value;
+        }
+
+        function scrollElementToBottom(element, smooth = true) {
+            element.scrollTo({
+                top: element.scrollHeight,
+                behavior: smooth ? 'smooth' : 'auto'
+            });
+        }
+
+        document.getElementById("executionButton").onclick = executeCode;
+
+        var personnalKeywords = [ ];
+
+        function luaHint(editor) {
+            const cursor = editor.getCursor();
+            const token = editor.getTokenAt(cursor);
+            const start = token.start;
+            const end = cursor.ch;
+            const currentWord = token.string;
+
+            const suggestions = [...luaKeywords, ...personnalKeywords].filter(kw => kw.startsWith(currentWord) && kw != currentWord);
+
+            return {
+                list: suggestions,
+                from: CodeMirror.Pos(cursor.line, start),
+                to: CodeMirror.Pos(cursor.line, end)
+            };
+        }
+
+        const editor = CodeMirror(document.getElementById('editor'), {
+            mode: 'text/x-lua',
+            lineNumbers: true,
+            indentWithTabs: true,
+            tabSize: 4,
+            gutters: ["CodeMirror-linenumbers", "custom-gutter"],
+            theme: 'default',
+            extraKeys: {
+                "Ctrl-Space": "autocomplete"
+            }
+        });
+
+        CodeMirror.registerHelper("hint", "lua", luaHint);
+
+        editor.on("inputRead", function onInput(editor, event) {
+            if (!editor.state.completionActive && event.text.length === 1) {
+                editor.showHint({
+                    hint: CodeMirror.hint.lua,
+                    completeSingle: false // Désactive l'acceptation automatique
+                });
+            }
+        });
+
+        // Tableau pour stocker les widgets (annotations de type "line widget")
+        const annotationWidgets = [];
+
+        // Fonction pour ajouter une annotation
+        function addAnnotation(line, text, above = true, className = "") {
+            // Sauvegarder la position de défilement actuelle
+            const scrollInfo = editor.getScrollInfo();
+
+            // Créer l'annotation
+            const annotation = document.createElement('div');
+            annotation.className = 'annotation ' + className;
+            annotation.textContent = text;
+
+            // Ajouter le widget
+            const widget = editor.addLineWidget(line, annotation, { above: above });
+            annotationWidgets.push(widget);
+
+            // Restaurer la position de défilement
+            editor.scrollTo(scrollInfo.left, scrollInfo.top);
+        }
+
+        function clearAnnotations() {
+            // Sauvegarder la position de défilement actuelle
+            const scrollInfo = editor.getScrollInfo();
+
+            while (annotationWidgets.length > 0) {
+                const widget = annotationWidgets.pop(); // Retirer chaque widget
+                widget.clear(); // Supprimer l'annotation
+            }
+
+            // Restaurer la position de défilement
+            editor.scrollTo(scrollInfo.left, scrollInfo.top);
+        }
+    </script>
+
+    <!-- FETCH CODE -->
     <script>
         $.ajax({
             url: 'api/code/' + documentName, // API endpoint
             type: 'GET', // HTTP method
-            dataType: 'text/plain', // Data type expected of the server response
             success: function (response) {
-                console.log('GET Response:', response); // Logs response from server
+                editor.setValue(response);
             },
             error: function (error) {
                 console.error('GET Error:', error.responseText); // Logs any error
-                editor.setValue(error.responseText);
             }
         });
     </script>
 }
 <div>
-    <div class="d-flex">
-        <input class="h2 w-100 border-0" type="text" id="docName" />
-        <input id="executionButton" type="button" class="btn btn-success m-2" value="Executer" />
+    <div class="position-sticky top-0" style="z-index:3; background:white;">
+        <div class="d-flex">
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center" style="color:gray">
+                <span class="material-symbols-outlined">drag_indicator</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center"
+                    id="executionButton"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="right"
+                    title="Ctrl + Enter">
+                <span class="material-symbols-outlined">play_arrow</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center" id="stopButton">
+                <span class="material-symbols-outlined">stop</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center" style="color:black">
+                <span class="material-symbols-outlined">terminal</span>
+            </button>
+
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center">
+                <span class="material-symbols-outlined">search</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center">
+                <span class="material-symbols-outlined">home</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+            <button class="btn btn-outline-light p-0 d-flex align-items-center justify-content-center">
+                <span class="material-symbols-outlined">favorite</span>
+            </button>
+        </div>
+        <div class="d-flex">
+            <input class="w-100 border-0" type="text" id="docName" />
+        </div>
     </div>
     <div class="d-flex">
         <div id="editor" class="w-100"></div>
         <div id="infoPanel" class="info-panel">
+        </div>
+    </div>
+    <div class="position-sticky bottom-0 overflow-auto " style="background:white; max-height: 30vh;">
+        <div id="scriptLogResultArea" class="w-100 font-monospace">
+
         </div>
     </div>
 </div>

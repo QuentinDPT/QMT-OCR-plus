@@ -2,5 +2,5 @@
 
 namespace QMTGroup.Core;
 
-public interface IUserLogger : ILogger
+public interface IWebLogger : ILogger
 { }

@@ -2,7 +2,7 @@
 
 
 [DSLNamespace("String")]
-public class StringLib
+public class StringLib : IDSLLibrary
 {
     public StringLib() { }
 
