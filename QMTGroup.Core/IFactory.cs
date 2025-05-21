@@ -1,4 +1,4 @@
-﻿namespace QMTGroup.Web.Factory;
+﻿namespace QMTGroup.Core;
 
 /// <summary>
 /// Represents a factory interface that is responsible for creating and retrieving instances of a given type.

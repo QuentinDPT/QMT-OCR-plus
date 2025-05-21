@@ -14,4 +14,6 @@ public static class UrnExtension
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown if the <paramref name="urn"/> is null.</exception>
     public static Uri AsUri(this Urn urn) => new Uri(urn.ToString());
+
+    public static string Last(this Urn urn) => urn.ToString().Split(":").Last();
 }

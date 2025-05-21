@@ -15,4 +15,8 @@
     <ProjectReference Include="..\QMTGroup.DSL.Library\QMTGroup.DSL.Library.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+
 </Project>

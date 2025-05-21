@@ -1,9 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
+using QMTGroup.Camera;
 using QMTGroup.Core;
 using QMTGroup.DSL.Hub;
 using QMTGroup.DSL.Library.EmguCV;
 using QMTGroup.DSL.Library.Math;
 using QMTGroup.DSL.Library.Standard;
+using QMTGroup.DSL.Library.Vision;
 using QMTGroup.DSL.Lua;
 using QMTGroup.Image.Interface;
 using QMTGroup.Web.Factory;
@@ -46,9 +48,8 @@ namespace QMTGroup.Web
 
             builder.Services.AddScoped<StdLib>();
             builder.Services.AddScoped<LogLib>();
-            builder.Services.AddSingleton<TimeLib>();
             builder.Services.AddSingleton<MathLib>();
-            builder.Services.AddSingleton<StringLib>();
+            builder.Services.AddScoped<CameraLib>();
 
             builder.Services.AddSingleton<EmguCVLib>();
 

@@ -1,6 +1,7 @@
 ﻿using QMTGroup.Camera;
+using QMTGroup.Core;
 
-namespace QMTGroup.Web.Factory;
+namespace QMTGroup.Camera;
 
 /// <summary>
 /// Represents a factory interface for creating and retrieving <see cref="ICamera"/> instances.

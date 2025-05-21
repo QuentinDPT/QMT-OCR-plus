@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
 using QMTGroup.Image;
+using QMTGroup.Urn;
 
 namespace QMTGroup.Camera.EmguCV;
 
@@ -27,7 +28,12 @@ public class Camera : ICamera
             return;
 
         _imageRecived = new Mat();
-        _videoCapture = new VideoCapture(_cameraParameters.Slot);
+
+        Tuple<CapProp, int>[] userProperties = _cameraParameters.UserParamters
+            .Select(x => System.Tuple.Create((CapProp)Enum.Parse(typeof(CapProp), x.Key.Last(), true), (int)x.Value))
+            .ToArray();
+
+        _videoCapture = new VideoCapture(_cameraParameters.Slot, VideoCapture.API.Any, userProperties);
 
         _cameraParameters.InternalDefaultParameters.Clear();
         _cameraParameters.InternalDefaultParameters = _extractActualParameters(_videoCapture);
@@ -49,8 +55,8 @@ public class Camera : ICamera
         {
             try
             {
-                _videoCapture.Retrieve(_imageRecived);
-                OnReciveImage.Invoke(this, _imageRecived.ToMatrix());
+                _videoCapture?.Retrieve(_imageRecived);
+                OnReciveImage?.Invoke(this, _imageRecived.ToMatrix());
             }
             catch (Exception)
             {
@@ -86,6 +92,9 @@ public class Camera : ICamera
             return;
 
         _videoCapture.Stop();
+
+        _videoCapture.Release();
+
         try
         {
             _videoCapture.Dispose();
@@ -94,7 +103,11 @@ public class Camera : ICamera
         {
             _videoCapture.Dispose();
         }
+
         _videoCapture = null;
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
     }
 
     private void _internalDispose()

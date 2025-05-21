@@ -87,8 +87,6 @@ public class Code2Controller : ControllerBase
     {
         DSLLuaCompiled scriptCompiled;
 
-        _webLogger.LogTrace("Starting `" + id + "`...");
-
         try
         {
             var script = new DSLLuaScript(id);
