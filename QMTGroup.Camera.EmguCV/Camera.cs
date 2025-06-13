@@ -40,7 +40,7 @@ public class Camera : ICamera
         _videoCapture = new VideoCapture(_cameraParameters.Slot, VideoCapture.API.Any, userProperties);
 
         _cameraParameters.InternalDefaultParameters.Clear();
-        _cameraParameters.InternalDefaultParameters = _extractActualParameters(_videoCapture);
+        _cameraParameters.InternalDefaultParameters = Enum.GetValues<CapProp>().Select(x => Enum.GetName(x) ?? string.Empty).Distinct().Order().ToList();
 
         _videoCapture.FlipVertical = _cameraParameters.FlipVertical;
         _videoCapture.FlipHorizontal = _cameraParameters.FlipHorizontal;

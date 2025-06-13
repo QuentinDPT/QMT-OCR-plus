@@ -46,8 +46,10 @@ public class Camera : ICamera
 
             HOperatorSet.GetFramegrabberParam(_camera, new HTuple("available_param_names"), out HTuple infoValues3);
             // > paramètres de la camera. le plus intérressant pour nous.
+             
+            _parameters = infoValues3.SArr.Distinct().Order().ToList();
 
-            _parameters = infoValues3.SArr.Distinct().OrderBy(x => x).ToList();
+            HOperatorSet.GetFramegrabberParam(_camera, new HTuple("LineSelector_values"), out HTuple possibleValues);
         }
         catch (Exception ex)
         {

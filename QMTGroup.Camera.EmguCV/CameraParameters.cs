@@ -13,8 +13,8 @@ public class CameraParameters
 
     public Dictionary<Urn.Urn, double> UserParamters { get; set; } = new();
 
-    public ReadOnlyDictionary<Urn.Urn, double> DefaultParameters => InternalDefaultParameters.AsReadOnly();
+    public IEnumerable<string> AvailableParameters => InternalDefaultParameters;
 
     [JsonIgnore]
-    internal Dictionary<Urn.Urn, double> InternalDefaultParameters = new();
+    internal List<string> InternalDefaultParameters = new();
 }
