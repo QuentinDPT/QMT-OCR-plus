@@ -12,6 +12,7 @@ end
 
 function execute()
   img = cam.grab()
+  
   logger.logInfo(img)
   
   -- On ferme la camera

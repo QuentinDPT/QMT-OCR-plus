@@ -10,6 +10,10 @@ public class Camera : ICamera
     private Task _acquisitionTask = Task.CompletedTask;
     private CancellationTokenSource _cancellationToken = new();
 
+    private CameraStatus _status = CameraStatus.Stopped;
+
+    public CameraStatus Status => _status;
+
     public Camera(CameraParameters parameters)
     {
         _parameters = parameters;
@@ -32,6 +36,8 @@ public class Camera : ICamera
         _image = _loadImage(_parameters.Path);
 
         _acquisitionTask = Task.Run(() => _capturePeriodically(_cancellationToken.Token));
+
+        _status = CameraStatus.Started;
     }
 
     private Matrix _loadImage(string resourcePath)
@@ -80,5 +86,7 @@ public class Camera : ICamera
         _acquisitionTask?.Wait();
         _cancellationToken = new CancellationTokenSource();
         _image.Dispose();
+
+        _status = CameraStatus.Stopped;
     }
 }

@@ -17,6 +17,10 @@ public class Camera : ICamera
 
     public CameraParameters Parameters => _cameraParameters;
 
+    private CameraStatus _cameraStatus = CameraStatus.Stopped;
+
+    public CameraStatus Status => _cameraStatus;
+
     public Camera(CameraParameters cameraParameters)
     {
         _cameraParameters = cameraParameters;
@@ -65,6 +69,8 @@ public class Camera : ICamera
         };
 
         _videoCapture.Start();
+
+        _cameraStatus = CameraStatus.Started;
     }
 
     private Dictionary<Urn.Urn, double> _extractActualParameters(VideoCapture videoCapture)
@@ -108,6 +114,8 @@ public class Camera : ICamera
 
         GC.Collect();
         GC.WaitForPendingFinalizers();
+
+        _cameraStatus = CameraStatus.Stopped;
     }
 
     private void _internalDispose()

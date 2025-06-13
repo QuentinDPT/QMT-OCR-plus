@@ -1,0 +1,9 @@
+{
+    "Plugins": [
+        {
+            "Location": "./PluginBidon.vplug",
+            "IsVisible": true,
+            "PluginType": 1
+        }
+    ]
+}

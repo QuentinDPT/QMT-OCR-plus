@@ -1,6 +1,7 @@
 ﻿using HalconDotNet;
 using Microsoft.Extensions.Logging;
 using QMTGroup.Image;
+using System.Runtime.InteropServices;
 
 namespace QMTGroup.Camera.Halcon;
 
@@ -16,10 +17,15 @@ public class Camera : ICamera
 
     private readonly ILogger _logger;
 
+    public IEnumerable<string> Parameters => _parameters;
+    private List<string> _parameters = new();
+
+
     public Camera(ILogger<Camera> logger)
     {
         _logger = logger;
     }
+
 
     public void StartCapture()
     {
@@ -30,6 +36,18 @@ public class Camera : ICamera
         try
         {
             _camera.OpenFramegrabber("USB3Vision", 1, 1, 0, 0, 0, 0, "default", -1, "default", -1, "default", "default", "default", -1, -1);
+
+            // extract camera parameter
+            HOperatorSet.InfoFramegrabber(new HTuple("USB3Vision"), new HTuple("info_boards"), out HTuple infosKeys, out HTuple infoValues);
+            // > paramètres généraux, quelles sont les camera par exemple
+
+            HOperatorSet.InfoFramegrabber(new HTuple("USB3Vision"), new HTuple("parameters"), out HTuple infosKeys2, out HTuple infoValues2);
+            // > parametres intérresants, mais pas la totalité
+
+            HOperatorSet.GetFramegrabberParam(_camera, new HTuple("available_param_names"), out HTuple infoValues3);
+            // > paramètres de la camera. le plus intérressant pour nous.
+
+            _parameters = infoValues3.SArr.Distinct().OrderBy(x => x).ToList();
         }
         catch (Exception ex)
         {
@@ -126,6 +144,10 @@ public class Camera : ICamera
     private HTuple ht_width;
     private HTuple ht_height;
     private int requiredImageSize;
+
+    private CameraStatus _status = CameraStatus.Stopped;
+
+    public CameraStatus Status => _status;
 
     private void _convertHImageToMatrix(ref Matrix matrix, HImage hv_Image)
     {

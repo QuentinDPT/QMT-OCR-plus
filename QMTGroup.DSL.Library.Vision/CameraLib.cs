@@ -27,8 +27,43 @@ public class CameraLib : IDSLLibrary
     }
 
     [DSLFunction]
-    public LuaTable GetFirst() => _cameraFactory.First().Value.ToLuaTable();
+    public LuaTable GetFirst()
+    {
+        var camera = _cameraFactory.First().Value;
+
+        var ltable = camera.ToLuaTable();
+        ltable = _addGrabFeature(ltable, camera);
+
+        return ltable;
+    }
 
     [DSLConstant]
     public LuaTable Available { get; set; } = new();
+
+    private LuaTable _addGrabFeature(LuaTable lua, ICamera camera)
+    {
+        camera.OnReciveImage += Camera_OnReciveImage;
+
+        lua["grab"] = () => _grab();
+        return lua;
+    }
+    
+    private Image.Matrix? _lastImage = null;
+
+    private string _grab()
+    {
+        while(_lastImage is null)
+        {
+            Thread.Sleep(0);
+        }
+
+        var result = _lastImage;
+        _lastImage = null;
+        return $"[[Image,{DateTime.Now.Ticks},{result.Width}x{result.Height}]]";
+    }
+
+    private void Camera_OnReciveImage(object? sender, Image.Matrix e)
+    {
+        _lastImage = e;
+    }
 }
