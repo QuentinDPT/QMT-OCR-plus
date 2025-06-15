@@ -36,7 +36,7 @@ public class WebLogger : IWebLogger, IMemoryLogger
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         _lastLog = formatter.Invoke(state, exception).Replace("\n", "<br/>");
-        var logBytes = Encoding.UTF8.GetBytes($"{{\"type\":\"log\",\"logType\":\"{logLevel}\",\"message\":\"{System.Net.WebUtility.HtmlEncode(_lastLog)}\"}},");
+        var logBytes = Encoding.UTF8.GetBytes($"{{\"type\":\"log\",\"logType\":\"{logLevel}\",\"message\":\"{System.Net.WebUtility.HtmlEncode(_lastLog)}\"}},\n");
 
         Task.Run(async () =>
         {

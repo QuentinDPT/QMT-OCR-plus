@@ -3,21 +3,33 @@ require "camera"
 
 cam = nil
 
+cameraWasStarted = true
+
 function init()
-  log("Starting camera...")
   cam = camera.getFirst()
-  cam.startCapture()
+  
+  if cam.getStatus() ~= "Started"
+  then
+  	log("Starting camera...")
+	cameraWasStarted = false
+  	cam.startCapture()
+  end
+  
   log("Camera started successfully")
 end
 
 function execute()
-  img = cam.grab()
-  logger.logInfo(img)
+  for i = 1, 10 do
+	img = cam.grab()
+	log("<img height='512px' style='display: flex;' src ='" .. img .. "' />")
+  end
   
-  -- On ferme la camera
-  log("Stopping camera...")
-  cam.stopCapture()
-  log("Camera stopped")
+  if not cameraWasStarted
+  then
+	log("Stopping camera...")
+	cam.stopCapture()
+	log("Camera stopped")
+  end
 end
 
 

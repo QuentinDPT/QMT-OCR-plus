@@ -1,8 +1,6 @@
 ﻿using Neo.IronLua;
-using QMTGroup.DSL.Library;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Xml.Linq;
 
 namespace QMTGroup.DSL.Lua;
 
@@ -14,7 +12,7 @@ public static class ObjectExtentions
 
         var result = new LuaTable();
 
-        // Filtre toutes les méthodes statiques avec l'attribut [DSLFunction]
+
         var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public);
 
         foreach (var method in methods)
@@ -33,6 +31,30 @@ public static class ObjectExtentions
             catch
             {
                 Console.WriteLine($"Impossible de créer un délégué pour la méthode : {method.Name}");
+            }
+        }
+
+
+        var constants = type.GetProperties().Where(x => x.CanRead && !x.CanWrite);
+
+        foreach (var constant in constants)
+        {
+            // On essaye de construire un delegate à partir de la signature
+            try
+            {
+                result["get" + constant.Name] = () =>
+                {
+                    var obj = constant.GetValue(self);
+
+                    if (obj is Enum)
+                        return obj.ToString();
+
+                    return obj;
+                };
+            }
+            catch
+            {
+                Console.WriteLine($"Impossible de créer un délégué pour la constante : {constant.Name}");
             }
         }
 

@@ -1,4 +1,6 @@
-﻿namespace QMTGroup.Image;
+﻿using System.Drawing;
+
+namespace QMTGroup.Image;
 
 
 public static class MatrixExtention
@@ -36,6 +38,5 @@ public static class MatrixExtention
             self.Data[(self.Width * y + x) * self.Channels + i] = pixel[i];
         }
     }
-
 }
 

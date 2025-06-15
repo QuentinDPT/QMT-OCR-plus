@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\QMTGroup.Camera\QMTGroup.Camera.csproj" />
     <ProjectReference Include="..\QMTGroup.Core\QMTGroup.Core.csproj" />
     <ProjectReference Include="..\QMTGroup.DSL.Library\QMTGroup.DSL.Library.csproj" />

@@ -59,7 +59,8 @@ public class CameraLib : IDSLLibrary
 
         var result = _lastImage;
         _lastImage = null;
-        return $"[[Image,{DateTime.Now.Ticks},{result.Width}x{result.Height}]]";
+
+        return result.ToBase64();
     }
 
     private void Camera_OnReciveImage(object? sender, Image.Matrix e)

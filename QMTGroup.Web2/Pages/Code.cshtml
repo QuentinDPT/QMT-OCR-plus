@@ -283,51 +283,55 @@
                 method: 'GET',
                 signal: controller.signal
             })
-                .then(response => {
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder();
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
 
-                    function read() {
-                        reader.read().catch((e) => {console.error(e)}).then(({ done, value }) => {
-                            if(done)
-                            {
-                                requestEnded();
-                                return;
-                            }
+                function read() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            requestEnded();
+                            return;
+                        }
 
-                            const chunk = decoder.decode(value, { stream: true });
+                        buffer += decoder.decode(value, { stream: true });
 
-                            // Ajouter chaque ligne reçue
-                            let obj = JSON.parse("[" + chunk.replace(/,$/, '') + "]");
-                            if (obj != undefined)
-                            {
-                                for (const objitem of obj)
-                                {
-                                    if(objitem.type == "log")
-                                    {
-                                        const p = document.createElement("div");
-                                        p.innerHTML = decodeHtmlEntity(objitem.message);
-                                        p.className = "log-" + objitem.logType;
-                                        logResultArea.appendChild(p);
-                                    }
+                        let lines = buffer.split(',\n');
+                        buffer = lines.pop(); // conserve la ligne incomplète
+
+                        for (let line of lines) {
+                            if (line.trim() === '') continue;
+
+                            try {
+                                const obj = JSON.parse(line);
+                                if (obj.type === "log") {
+                                    const p = document.createElement("div");
+                                    p.innerHTML = decodeHtmlEntity(obj.message);
+                                    p.className = "log-" + obj.logType;
+                                    p.style = "display:flex;";
+                                    logResultArea.appendChild(p);
                                 }
+                            } catch (e) {
+                                console.error("Erreur de JSON : ", e, line);
                             }
-                            scrollElementToBottom(logResultArea.parentElement);
-                            read(); // continuer à lire
-                        });
-                    }
+                        }
 
-                    read();
-                })
-                .catch(err => {
-                    console.error(err);
-                    const p = document.createElement("div");
-                    p.textContent = err.message;
-                    p.className = "log-Critical";
-                    logResultArea.appendChild(p);
-                    requestEnded();
-                });
+                        scrollElementToBottom(logResultArea.parentElement);
+                        read(); // continuer
+                    });
+                }
 
+                read();
+            })
+            .catch(err => {
+                console.error(err);
+                const p = document.createElement("div");
+                p.textContent = err.message;
+                p.className = "log-Critical";
+                logResultArea.appendChild(p);
+                requestEnded();
+            });
         }
 
         function decodeHtmlEntity(str) {
