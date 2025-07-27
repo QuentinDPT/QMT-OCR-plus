@@ -1,9 +1,10 @@
-﻿using System.Buffers;
+﻿using QMTGroup.Image.Interface;
+using System.Buffers;
 using System.Runtime.InteropServices;
 
 namespace QMTGroup.Image;
 
-public class Matrix : IDisposable, Core.IClonable<Matrix>
+public class Matrix : IDisposable, IClonable<Matrix>
 {
     private ArrayPool<byte> _memoryPool = ArrayPool<byte>.Shared;
 

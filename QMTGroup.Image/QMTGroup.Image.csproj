@@ -7,9 +7,4 @@
     <Platforms>AnyCPU;x64</Platforms>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\QMTGroup.Core\QMTGroup.Core.csproj" />
-  </ItemGroup>
-
 </Project>
