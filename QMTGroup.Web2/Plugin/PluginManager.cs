@@ -12,7 +12,9 @@ public static class PluginManager
     public static void AddPluginFromConfiguration(this IServiceCollection services, IConfiguration configuration)
     {
         var pluginsSection = configuration.GetSection("Plugins");
-        List<string> pluginsFilesList = pluginsSection.Get<List<string>>() ?? throw new InvalidCastException();
+        if (pluginsSection.AsEnumerable().Count() == 1)
+            throw new KeyNotFoundException("Plugins");
+        List<string> pluginsFilesList = pluginsSection.Get<List<string>>() ?? throw new JsonException("Invalid format in 'plugin' section of appsettings.json: expected an array of strings (string[]), but found a different structure.");
 
         foreach (string pluginFile in pluginsFilesList)
             _addPluginFrom(services, pluginFile);
@@ -26,9 +28,26 @@ public static class PluginManager
         {
             string pluginFileLocation = Path.GetDirectoryName(pluginFile) ?? string.Empty;
             string pluginFileName = Path.GetFileName(pluginFile);
+            if (!Directory.Exists(pluginFileLocation))
+                Directory.CreateDirectory(pluginFileLocation);
             Directory.SetCurrentDirectory(pluginFileLocation);
-            
-            var pluginFileContent = JsonSerializer.Deserialize<PluginFile>(File.ReadAllText(pluginFileName));
+
+            if (!File.Exists(pluginFileName))
+            {
+                var sw = File.CreateText(pluginFileName);
+                sw.Write(JsonSerializer.Serialize(new PluginFile()));
+                sw.Close();
+            }
+
+            PluginFile pluginFileContent;
+            try
+            {
+                pluginFileContent = JsonSerializer.Deserialize<PluginFile>(File.ReadAllText(pluginFileName));
+            }catch(JsonException)
+            {
+                Console.Error.WriteLine("Error during plugin list file deserialisation.");
+                throw;
+            }
 
             if (pluginFileContent?.Plugins is null)
                 throw new ArgumentNullException(nameof(pluginFileContent));

@@ -1,0 +1,9 @@
+[package]
+name = "qmtgroup_matrix_rs"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[dependencies]

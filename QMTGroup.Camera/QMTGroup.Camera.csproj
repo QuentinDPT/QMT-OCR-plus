@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.Core\QMTGroup.Core.csproj" />
     <ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
   </ItemGroup>
 
