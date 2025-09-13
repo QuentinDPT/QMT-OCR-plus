@@ -44,6 +44,6 @@ Pour tester le programme, il faut executer le projet `QMTGroup.UI` pour pouvoir 
 
 # Realisation
 
-![Main page - object identification](https://raw.githubusercontent.com/QuentinDPT/QMT-OCR-plus/refs/heads/master/resources/main%20page%20-%20object%20identification.png?token=GHSAT0AAAAAADLCW4PHKRZNKQODMNPZKM3S2GFFYIQ)
+![Main page - object identification](https://raw.githubusercontent.com/QuentinDPT/QMT-OCR-plus/refs/heads/master/resources/main%20page%20-%20object%20identification.png?token=GHSAT0AAAAAADLCW4PHZ7JYGMKIEG7A6E4K2GFGCAA)
 
 
