@@ -42,3 +42,7 @@ Pour tester le programme, il faut executer le projet `QMTGroup.UI` pour pouvoir 
 
 ![Sans titre](https://github.com/QuentinDPT/QMT-OCR-plus/assets/45800885/7e5b8514-85dd-49cd-ae31-ffd5762a1d41)
 
+# Realisation
+![Sans titre](./resources/main page - object identification.png)
+
+

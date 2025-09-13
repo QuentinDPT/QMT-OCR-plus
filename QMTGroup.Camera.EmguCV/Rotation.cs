@@ -1,0 +1,9 @@
+﻿namespace QMTGroup.Camera.EmguCV;
+
+public enum Rotation
+{
+    Rotate0,
+    Rotate90,
+    Rotate180,
+    Rotate270,
+}

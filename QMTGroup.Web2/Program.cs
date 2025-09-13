@@ -24,7 +24,7 @@ namespace QMTGroup.Web
 
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
                 .AddEnvironmentVariables()
                 .AddCommandLine(args);
 
@@ -32,7 +32,8 @@ namespace QMTGroup.Web
 
 
             var builder = WebApplication.CreateBuilder(args);
-            builder.WebHost.UseUrls(["https://localhost:7083", "http://localhost:5062", "https://0.0.0.0:7083", "http://0.0.0.0:5062"]);
+            //builder.WebHost.UseUrls(["https://localhost:7083", "http://localhost:5062", "https://0.0.0.0:7083", "http://0.0.0.0:5062"]);
+            builder.WebHost.UseUrls(["http://localhost:80", "http://0.0.0.0:80"]);
             builder.Configuration.AddConfiguration(configuration);
 
             // Add services to the container.
@@ -89,7 +90,7 @@ namespace QMTGroup.Web
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -105,9 +106,11 @@ namespace QMTGroup.Web
             cameraFactory.Create<Camera.EmguCV.Camera>(new Camera.EmguCV.CameraParameters()
             {
                 Slot = 0,
-                FlipHorizontal = true,
+                FlipHorizontal = false,
                 UserParamters = new Dictionary<Urn.Urn, double>()
                 {
+                    //{ new Urn.Urn("urn:Monochrome"), 1 },
+                    //{ new Urn.Urn("urn:Roll"), 90 },
                     //{ new Urn.Urn("urn:Fps"), 10 },
                     /*
                     // 720p
@@ -124,7 +127,7 @@ namespace QMTGroup.Web
             cameraFactory.Create<Camera.Halcon.Camera>(null);
             cameraFactory.Create<Camera.File.Camera>(new Camera.File.CameraParameters()
             {
-                Path = @"..\rgb_calibration.png",
+                Path = @".\rgb_calibration.png",
                 AcquisitionLoopSleep = 10,
                 //Path = @"..\heavy.jpg"
             });

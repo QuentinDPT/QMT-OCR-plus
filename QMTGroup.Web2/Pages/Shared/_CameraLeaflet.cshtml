@@ -61,7 +61,7 @@
     var imageOverlay = {};
     window.addEventListener("load", function(e){
         $.ajax({
-            url: "https://localhost:7083/api/overlay",
+            url: "/api/overlay",
             type: "GET",
             success: function(e){
                 const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');

@@ -38,4 +38,10 @@
 		<ProjectReference Include="..\QMTGroup.Overlay\QMTGroup.Overlay.csproj" />
 		<ProjectReference Include="..\QMTGroup.WebLogger\QMTGroup.WebLogger.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="rgb_calibration.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

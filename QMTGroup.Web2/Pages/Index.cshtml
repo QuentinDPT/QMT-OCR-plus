@@ -27,14 +27,14 @@
     <script>
         document.getElementById("STD").onclick = function(e){
             $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/0",
+                url: "/api/videoStream/apply/0",
                 type: 'GET',
             });
         };
 
         document.getElementById("MD1").onclick = function(e){
             $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/1",
+                url: "/api/videoStream/apply/1",
                 type: 'GET',
             });
         };
@@ -45,7 +45,7 @@
 
 
             $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/2?parameter1=" + kernelSize + "&parameter2=" + sigma,
+                url: "/api/videoStream/apply/2?parameter1=" + kernelSize + "&parameter2=" + sigma,
                 type: 'GET',
             });
         };
@@ -126,7 +126,7 @@
             document.getElementById("ONOFF").disabled = true;
             if(cameraStarted){
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/stop?cameraInstance="+guid,
+                    url: "/api/videoStream/stop?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = false;
@@ -140,7 +140,7 @@
                 });
             }else{
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/start?cameraInstance="+guid,
+                    url: "/api/videoStream/start?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = true;
@@ -158,7 +158,7 @@
 
     <script>
         $.ajax({
-            url: "https://localhost:7083/api/videostream/allcamera",
+            url: "/api/videostream/allcamera",
             type: 'GET',
             success: function(e){
                 var str = "";
