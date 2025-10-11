@@ -6,30 +6,19 @@ cam = nil
 cameraWasStarted = true
 
 function init()
-  cam = camera.getFirst()
-  
-  if cam.getStatus() ~= "Started"
-  then
-  	log("Starting camera...")
-	cameraWasStarted = false
-  	cam.startCapture()
-  end
-  
-  log("Camera started successfully")
 end
 
 function execute()
-  for i = 1, 10 do
-	img = cam.grab()
-	log("<img height='512px' style='display: flex;' src ='" .. img .. "' />")
-  end
-  
-  if not cameraWasStarted
-  then
-	log("Stopping camera...")
-	cam.stopCapture()
-	log("Camera stopped")
-  end
+  e()
+  e("bonjour")
+end
+
+function e()
+  logger.logError("1 ere methode")
+end
+
+function e(mesasge)
+  logger.logError("2 eme methode")
 end
 
 

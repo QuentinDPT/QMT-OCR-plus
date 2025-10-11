@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            :root {
+                --bg-color: white;
+                --text-color: black;
+            }
+
+            [data-theme="dark"] {
+                --bg-color: #121212;
+                --text-color: #eeeeee;
+            }
+            *{
+                background-color: var(--bg-color);
+                color:var(--text-color);
+            }
+            body { margin: 0; display: flex; height: 100vh; }
+            #container { flex: 1; position: relative; }
+            #sidebar { width: 250px; background: var(--bg-color); padding: 10px; overflow-y: auto; }
+            .shapes > button { margin: 5px 0; width: 100%; background:var(--bg-color); }
+            .shapes > button > img { background-color: transparent;}
+            .shapes > button:hover { background-color: #aaa3; }
+            li { cursor: pointer; margin-bottom: 5px; }
+            li.selected { background-color: #cce5ff; }
+            .with-transition * {
+      transition: background-color 0.4s, color 0.4s;
+    }
+        </style>
+    </head>
+    <body>
+        <div id="sidebar">
+            <h3>Outils</h3>
+            <div class="shapes" style="display:flex;flex-flow: wrap;">
+                <button id="drawRect" style="margin: 1em; padding:0; border:0; width:50px;">
+                    <img style="width:50px;" data-img data-light="./assets/img/rect-2-points.svg" data-dark="./assets/img/rect-2-points-light.svg" alt="">
+                </button>
+                <button id="drawCircle" style="margin: 1em; padding:0; border:0; width:50px;">
+                    <img style="width:50px;" data-img data-light="./assets/img/circle-2-points.svg" data-dark="./assets/img/circle-2-points-light.svg" alt="">
+                </button>
+                <button id="drawLine" style="margin: 1em; padding:0; border:0; width:50px;">
+                    <img style="width:50px;" data-img data-light="./assets/img/line-2-points.svg" data-dark="./assets/img/line-2-points-light.svg" alt="">
+                </button>
+                <button id="drawCircle3Points" style="margin: 1em; padding:0; border:0; width:50px;">
+                    <img style="width:50px;" data-img data-light="./assets/img/circle-3-points.svg" data-dark="./assets/img/circle-3-points-light.svg" alt="">
+                </button>
+                <button id="panTool" style="margin: 1em; padding:0; border:0; width:50px;">
+                    <img style="width:50px;" data-img data-light="./assets/img/shape-x-points.svg" data-dark="./assets/img/shape-x-points-light.svg" alt="">
+                </button>
+            </div>
+            <button id="drawText">Texte</button>
+            <button id="theme-toggle">Changer de thème</button>
+            <h3>Formes</h3>
+            <ul id="shapeList"></ul>
+          </div>
+        <div id="container"></div>
+    </body>
+    <script type="text/javascript" src="./assets/fw/konva.min.js"></script>
+    <script type="text/javascript" src="./script.js"></script>
+    <script>
+        const toggleTheme = () => {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute("data-theme");
+            const newTheme = currentTheme === "dark" ? "light" : "dark";
+            html.setAttribute("data-theme", newTheme);
+            localStorage.setItem("theme", newTheme);
+            
+            html.classList.add("with-transition");
+
+            // Mettre à jour les images
+            document.querySelectorAll('[data-img]').forEach(img => {
+                const lightSrc = img.getAttribute('data-light');
+                const darkSrc = img.getAttribute('data-dark');
+                img.src = newTheme === 'dark' ? darkSrc : lightSrc;
+            });
+
+            // Supprimer la classe une fois la transition terminée
+            const removeTransition = () => {
+                html.classList.remove("with-transition");
+                html.removeEventListener("transitionend", removeTransition);
+            };
+            html.addEventListener("transitionend", removeTransition);
+        };
+
+        document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+
+        // Charger la préférence au démarrage
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) toggleTheme(savedTheme);
+    </script>
+</html>
