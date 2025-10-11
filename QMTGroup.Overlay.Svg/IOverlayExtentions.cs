@@ -8,7 +8,7 @@ public static class IOverlayExtentions
 {
     public static SvgVisualElement ToSvg(this IOverlay overlay, Dictionary<string, string>? customAttributes = null)
     {
-        customAttributes ??= new Dictionary<string, string>();
+        customAttributes ??= [];
 
         SvgVisualElement element;
 

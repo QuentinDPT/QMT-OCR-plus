@@ -40,6 +40,14 @@ namespace QMTGroup.Web
 
             builder.Services.AddSignalR();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("DevCors", policy =>
+                {
+                    policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddSingleton<AssemblyTypes>(_ => new(AppDomain.CurrentDomain.GetAssemblies()));
@@ -80,6 +88,8 @@ namespace QMTGroup.Web
             builder.Logging.AddDebug(); // Active seulement les logs en mode debug
 
             var app = builder.Build();
+
+            app.UseCors("DevCors");
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

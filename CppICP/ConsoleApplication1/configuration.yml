@@ -1,0 +1,9 @@
+﻿configuration:
+  mmf_id: "bonjour"
+  data_stream:
+    ring_size: 4
+    cache_alignment_size: 64
+  image_stream:
+    width: 160
+    height: 90
+    chanel_size: 3

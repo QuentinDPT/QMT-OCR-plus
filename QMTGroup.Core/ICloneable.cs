@@ -6,7 +6,7 @@
 /// <typeparam name="T">
 /// The type of the object that implements this interface. Must be a reference type.
 /// </typeparam>
-public interface IClonable<T> where T : class
+public interface ICloneable<T> where T : class
 {
     /// <summary>
     /// Creates a new instance of the current object with the same values.

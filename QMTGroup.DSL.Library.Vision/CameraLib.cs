@@ -29,10 +29,10 @@ public class CameraLib : IDSLLibrary
     [DSLFunction]
     public LuaTable GetFirst()
     {
-        var camera = _cameraFactory.First().Value;
+        ICamera? cam = _cameraFactory.FirstOrDefault(x => x.Value.Status == CameraStatus.Started).Value ?? _cameraFactory.First().Value;
 
-        var ltable = camera.ToLuaTable();
-        ltable = _addGrabFeature(ltable, camera);
+        var ltable = cam.ToLuaTable();
+        ltable = _addGrabFeature(ltable, cam);
 
         return ltable;
     }

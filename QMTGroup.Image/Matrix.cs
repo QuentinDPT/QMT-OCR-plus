@@ -41,6 +41,7 @@ public class Matrix : IDisposable, IClonable<Matrix>
         _memoryPool = memoryPool;
         _dataLength = imageSize;
         _innerDataSpace = _memoryPool.Rent(_dataLength);
+        
     }
 
     public Matrix(ArrayPool<byte> memoryPool, int width, int height, DataType channels = DataType.Y_8)

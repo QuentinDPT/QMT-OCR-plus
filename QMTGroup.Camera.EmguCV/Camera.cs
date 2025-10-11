@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Microsoft.Extensions.Logging;
 using QMTGroup.Image;
 using QMTGroup.Urn;
 
@@ -21,9 +22,12 @@ public class Camera : ICamera
 
     public CameraStatus Status => _cameraStatus;
 
-    public Camera(CameraParameters cameraParameters)
+    private ILogger<ICamera> _cameraLogger;
+
+    public Camera(CameraParameters cameraParameters, ILogger<Camera> logger)
     {
         _cameraParameters = cameraParameters;
+        _cameraLogger = logger;
     }
 
     public void StartCapture()

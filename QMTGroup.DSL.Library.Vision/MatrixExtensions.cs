@@ -11,6 +11,9 @@ public static class MatrixExtensions
         PixelFormat format;
         switch (self.Channels)
         {
+            case 1:
+                format = PixelFormat.Format8bppIndexed;
+                break;
             case 3:
                 format = PixelFormat.Format24bppRgb;
                 break;
@@ -26,17 +29,34 @@ public static class MatrixExtensions
 
         Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppRgb);
 
-        for (int y = 0; y < height; y++)
+        if (self.Channels == 1)
         {
-            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
             {
-                var pixelRed = self.Data[(self.Width * y + x) * self.Channels];
-                var pixelBlue = self.Data[(self.Width * y + x) * self.Channels +1];
-                var pixelGreen = self.Data[(self.Width * y + x) * self.Channels +2];
+                for (int x = 0; x < width; x++)
+                {
+                    var pixel = self.Data[(self.Width * y + x) * self.Channels];
 
-                int argb = (pixelGreen << (8 * 2)) | (pixelBlue << (8)) | pixelRed;
-                Color color = Color.FromArgb(argb);
-                bitmap.SetPixel(x, y, color);
+                    int argb = (pixel << (8 * 2)) | (pixel << (8)) | pixel;
+                    Color color = Color.FromArgb(argb);
+                    bitmap.SetPixel(x, y, color);
+                }
+            }
+        }
+        else
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var pixelRed = self.Data[(self.Width * y + x) * self.Channels];
+                    var pixelBlue = self.Data[(self.Width * y + x) * self.Channels + 1];
+                    var pixelGreen = self.Data[(self.Width * y + x) * self.Channels + 2];
+
+                    int argb = (pixelGreen << (8 * 2)) | (pixelBlue << (8)) | pixelRed;
+                    Color color = Color.FromArgb(argb);
+                    bitmap.SetPixel(x, y, color);
+                }
             }
         }
 

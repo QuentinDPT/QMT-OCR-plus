@@ -7,8 +7,6 @@ namespace QMTGroup.Image.EmguCV
 {
     public class CodecConverter : IJpegConverter
     {
-
-
         public byte[] ConvertToJpeg(Matrix image, int quality)
         {
             try

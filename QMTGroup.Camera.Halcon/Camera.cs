@@ -111,6 +111,8 @@ public class Camera : ICamera
         _img?.Dispose();
         _img = new HImage(_obj);
 
+        new HImage("byte",1,1,)
+
         matt ??= new Matrix();
 
         _convertHImageToMatrix(ref matt, _img);
@@ -147,9 +149,7 @@ public class Camera : ICamera
     private HTuple ht_height;
     private int requiredImageSize;
 
-    private CameraStatus _status = CameraStatus.Stopped;
-
-    public CameraStatus Status => _status;
+    public CameraStatus Status => _camera is not null && _camera.IsInitialized() ? CameraStatus.Started : CameraStatus.Stopped;
 
     private void _convertHImageToMatrix(ref Matrix matrix, HImage hv_Image)
     {

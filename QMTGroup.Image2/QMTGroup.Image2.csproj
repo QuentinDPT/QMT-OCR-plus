@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QMTGroup.Core\QMTGroup.Core.csproj" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<None Update="$(SolutionDir)\QMTGroup_Matrix_rs\target\debug\qmtgroup_matrix_rs.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="qmtgroup_matrix_rs.dll">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+</Project>

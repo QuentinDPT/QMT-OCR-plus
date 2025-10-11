@@ -1,4 +1,5 @@
-﻿using QMTGroup.Image;
+﻿using Microsoft.Extensions.Logging;
+using QMTGroup.Image;
 
 namespace QMTGroup.Camera;
 
