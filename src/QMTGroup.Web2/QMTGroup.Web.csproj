@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Platforms>AnyCPU;x64</Platforms></PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
+		<PackageReference Include="Emgu.CV.runtime.debian-arm" Version="4.8.1.5350" />
+		<PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.8.1.5350" />
+		<PackageReference Include="Emgu.CV.runtime.mini.debian-arm" Version="4.8.1.5350" />
+		<PackageReference Include="Emgu.CV.runtime.mini.debian-arm64" Version="4.8.1.5350" />
+		<PackageReference Include="Emgu.CV.runtime.ubuntu-x64" Version="4.8.1.5350" />
+		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.10.0.5680" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\LuaOrchestrator\LuaOrchestrator.csproj" />
+		<ProjectReference Include="..\QMTGroup.Camera.EmguCV\QMTGroup.Camera.EmguCV.csproj" />
+		<ProjectReference Include="..\QMTGroup.Camera.File\QMTGroup.Camera.File.csproj" />
+		<ProjectReference Include="..\QMTGroup.Camera.Halcon\QMTGroup.Camera.Halcon.csproj" />
+		<ProjectReference Include="..\QMTGroup.Camera\QMTGroup.Camera.csproj" />
+		<ProjectReference Include="..\QMTGroup.Core\QMTGroup.Core.csproj" />
+		<ProjectReference Include="..\QMTGroup.DSL.Library.Vision\QMTGroup.DSL.Library.Vision.csproj" />
+		<ProjectReference Include="..\QMTGroup.DSL.Lua\QMTGroup.DSL.Lua.csproj" />
+		<ProjectReference Include="..\QMTGroup.Image.EmguCV\QMTGroup.Image.EmguCV.csproj" />
+		<ProjectReference Include="..\QMTGroup.Image.FFMPEG\QMTGroup.Image.FFMPEG.csproj" />
+		<ProjectReference Include="..\QMTGroup.ImageFilters\QMTGroup.ImageFilters.csproj" />
+		<ProjectReference Include="..\QMTGroup.Image\QMTGroup.Image.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay.Dxf\QMTGroup.Overlay.Dxf.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay.Svg\QMTGroup.Overlay.Svg.csproj" />
+		<ProjectReference Include="..\QMTGroup.Overlay\QMTGroup.Overlay.csproj" />
+		<ProjectReference Include="..\QMTGroup.WebLogger\QMTGroup.WebLogger.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\lib\yaml\" />
+	</ItemGroup>
+</Project>

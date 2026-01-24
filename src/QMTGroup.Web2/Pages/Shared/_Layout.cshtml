@@ -1,0 +1,86 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <!-- Configuration de la couleur de la barre de statut (s'affiche en haut de l'écran sur les téléphones) -->
+    <meta name="theme-color" content="#4CAF50">
+    @if(ViewData.ContainsKey("Title")) {
+        <title>VisionLab - @ViewData["Title"]</title>
+    }else{
+        <title>VisionLab</title>
+    }
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/QMTGroup.Web2.styles.css" asp-append-version="true" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Material%20Symbols%20Outlined:opsz,wght,FILL,GRAD@20,100,1,200&icon_names=account_tree,add,arrow_back,brush,bug_report,camera,code,delete,download,drag_indicator,edit,error,experiment,extension,favorite,folder_code,folder_data,home,info,memory,more_horiz,nearby,play_arrow,precision_manufacturing,routine,save,search,settings,stop,terminal" rel="stylesheet" />
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+    </script>
+
+
+    <style>
+        .lh-0{
+            line-height: 0 !important;
+        }
+
+        .btn-outline-light {
+            color: var(--bs-btn-color);
+            opacity: .6;
+        }
+
+        .btn-outline-light:hover {
+            color: var(--bs-btn-color);
+            opacity: 1;
+        }
+    </style>
+
+    @await RenderSectionAsync("Styles", required: false)
+
+</head>
+<body>
+    <div class="d-flex flex-row align-items-stretch h-100 page">
+        <aside class="border-right">
+            <ul class="list-unstyled maximize-icons">
+                <li>
+                    <a class="btn btn-outline-primary border-0 lh-0" asp-page="/Index">
+                        <span class="material-symbols-outlined">camera</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="btn btn-outline-primary border-0 lh-0" asp-page="/Code">
+                        <span class="material-symbols-outlined">code</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="btn btn-outline-primary border-0 lh-0" asp-page="/Sequence">
+                        <span class="material-symbols-outlined">account_tree</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="btn btn-outline-primary border-0 lh-0" asp-page="/Configuration">
+                        <span class="material-symbols-outlined">settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+        <main role="main" class="overflow-auto w-100">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,450 @@
+﻿@page "{ressource?}"
+@model QMTGroup.Web.Pages.SequenceModel
+@{
+    ViewData["Title"] = "Sequence";
+}
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/drawflow@0.0.45/dist/drawflow.min.css">
+    <style>
+        .dropdown-toggle-none::after{
+            content: none;
+        }
+
+        .additional-info{
+            padding-left:.5rem;
+        }
+        
+        .additional-info *:first-child{
+            width: 24px;
+            max-width: 24px;
+            min-width: 24px;
+            margin-right: .5rem;
+        }
+
+        .additional-info *:nth-child(2){
+            width: 100%;
+            margin-right: .5rem;
+        }
+    </style>
+
+    <style>
+        .drawflow .drawflow-node {
+            border: 0;
+            padding: 0;
+            width: unset;
+        }
+
+        .sequence-operation{
+            min-width: 200px;
+        }
+
+        .lh-0{
+            line-height: 0;
+        }
+    </style>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: sans-serif;
+        }
+
+        #editor {
+            flex: 1;
+            border-top: 1px solid #ccc;
+        }
+
+        header {
+            background: #222;
+            color: #fff;
+            padding: 10px;
+        }
+
+        #drawflow {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #fff ;
+            background-size: 25px 25px;
+            background-image: linear-gradient(to right, #eee 1px, transparent 1px), linear-gradient(to bottom, #eee 1px, transparent 1px);
+        }
+
+        #drawflow .drawflow {
+            position: absolute;
+            inset: 0;
+        }
+
+    </style>
+}
+
+
+@if (string.IsNullOrEmpty(Model.Ressource))
+{
+    @section Scripts{
+        <script>
+            function addSequence(title, description) {
+                const template = document.getElementById('sequence-item-template');
+                const list = document.getElementById('sequence-list');
+
+                // Clone du template
+                const clone = template.content.cloneNode(true);
+
+                // Bind des données
+                clone.querySelector('.item-title').textContent = title;
+                if(description == "")
+                    clone.querySelector('.item-description').style = "display: none;";
+                else
+                    clone.querySelector('.item-description').textContent = description;
+
+                // Bouton edit
+                clone.querySelector('.btn-edit').onclick = () => {
+                    window.location = `/Sequence/${title}`;
+                };
+
+                // Bouton delete
+                clone.querySelector('.btn-delete').onclick = () => {
+                    $.ajax({
+                        url: 'api/sequencer',
+                        type: 'DELETE',
+                        contentType: 'application/json',
+                        data: JSON.stringify(title),
+                        success: function (response) {
+                            window.location = window.location;
+                        },
+                        error: function (error) {
+                            console.error('GET Error:', error);
+                        }
+                    });
+                };
+
+                list.appendChild(clone);
+            }
+
+            $.ajax({
+                url: 'api/sequencer',
+                type: 'GET',
+                success: function (response) {
+                    console.log(response);
+
+                    for(const i of response){
+                        addSequence(i.title, i.description);
+                    }
+                },
+                error: function (error) {
+                    console.error('GET Error:', error);
+                }
+            });
+
+            function createNewSequence() {
+                var sequenceName = document.getElementById("addSequenceName").value;
+
+                if(sequenceName == ""){
+                    console.error("Can'this add an empty sequence name.");
+                    return;
+                }
+
+                $.ajax({
+                    url: 'api/sequencer',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(sequenceName),
+                    success: function (response) {
+                        window.location = "/Sequence/" + sequenceName ;
+                    },
+                    error: function (error) {
+                        console.error('GET Error:', error);
+                    }
+                });
+            }
+
+            document.getElementById("addNewSequenceButton").onclick = createNewSequence;
+        </script>
+
+    }
+
+    <h2>Sequences</h2>
+    <p>Sequences.</p>
+
+    <div>
+        <button class="btn btn-outline-primary rounded-pill" onclick="window.location = `vscode://file/@Model.DirectoryLocation`;">
+            <img style="height:24px; transform: scale(.75);" src="/img/vscode-icon.svg" />
+        </button>
+    </div>
+
+    <template id="sequence-item-template">
+        <li style="background:#eee" class="list-group-item d-flex justify-content-between m-1">
+            <div class="d-flex flex-column justify-content-around">
+                <h5 class="item-title m-0"></h5>
+                <small class="item-description p-left-3"></small>
+            </div>
+
+            <div class="d-flex">
+                <button class="btn btn-secondary m-1 btn-edit">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+
+                <div class="dropdown m-1">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-symbols-outlined">more_horiz</span>
+                    </button>
+
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item d-flex additional-info">
+                            <span class="material-symbols-outlined">download</span>
+                            <span>Download</span>
+                        </div>
+
+                        <div class="dropdown-item d-flex additional-info btn-delete">
+                            <span class="material-symbols-outlined">delete</span>
+                            <span>Supress</span>
+                        </div>
+
+                        <div class="dropdown-item d-flex additional-info">
+                            <span class="material-symbols-outlined">info</span>
+                            <span>Informations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </template>
+    <ul id="sequence-list" class="list-group list-group-flush">
+    </ul>
+    <input  type="text" id="addSequenceName"/>
+    <button type="button" class="btn btn-primary" id="addNewSequenceButton">
+        <span class="material-symbols-outlined">add</span>
+    </button>
+}
+else
+{
+    @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/drawflow@0.0.45/dist/drawflow.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+        <script src="/lib/yaml/yaml.min.js"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+        <script>
+            var sequenceName = "@Model.Ressource";
+
+            window.addEventListener("load", function(){
+                $.ajax({
+                    url: '/api/sequencer/' + sequenceName,
+                    type: 'GET',
+                    success: function (response) {
+                        editorTxt.setValue(response);
+                    },
+                    error: function (error) {
+                        console.error('GET Error:', error);
+                    }
+                });
+            });
+        </script>
+
+        <script>
+            var editorTxt;
+
+            require.config({
+                paths: {
+                    'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs'
+                }
+            });
+
+            require(['vs/editor/editor.main'], function () {
+                editorTxt = monaco.editor.create(document.getElementById('editor'), {
+                    value: "",
+                    language: "yaml",
+                    theme: "vs-light",
+                    automaticLayout: true
+                });
+            });
+        </script>
+        
+        <script>
+            let flowEditor = null;
+
+            window.onload = () => {
+                const container = document.getElementById("drawflow");
+                flowEditor = new Drawflow(container);
+                flowEditor.start();
+
+                flowEditor.on('nodeMoved', function(id) {
+                    onComponentMove(id);
+                });
+            };
+
+            function extractPositionFromComment(comment) {
+                if (!comment) return null;
+
+                // Recherche d’un pattern du style "position: X,Y"
+                const match = comment.match(/## job.position\s*:\s*(\-?[0-9]+)\s*,\s*(\-?[0-9]+)/i);
+                if (!match) return null;
+
+                return {
+                    x: parseInt(match[1], 10),
+                    y: parseInt(match[2], 10)
+                };
+            }
+
+            function openWithVS(){
+                window.location = "vscode://file/@Model.DirectoryLocation/@Model.Ressource" + ".yaml";
+            }
+
+            function displayGraph(){
+                setTimeout(yamlToDrawflow, 100);
+            }
+
+            function yamlToDrawflow() {
+                const yamlText = editorTxt.getValue();
+
+                // 1. Parser YAML en mode AST (pour avoir les commentaires)
+                const doc = YAML.parseDocument(yamlText);
+
+                // 2. Nettoyer Drawflow
+                flowEditor.clear();
+                const positions = {};
+
+                const items = doc.contents.items;
+                var itemIndex = 0;
+
+                // 4. Parcourir chaque job
+                items.forEach((item, i) => {
+                    const job = item.key.value;
+                    const jobData = item.value.toJSON();
+
+                    const comment = item.key.commentBefore || "";
+                    const manualPos = extractPositionFromComment(comment);
+
+                    const html = `
+                        <div class="sequence-operation card">
+                            <div class="card-header d-flex">
+                                <div class="card-title m-0 d-flex w-100 justify-content-between align-items-baseline">
+                                    <h5 class="m-0">
+                                        <span class="material-symbols-outlined" style="font-size:2rem;">memory</span>
+                                        ${job}
+                                    </h5>
+                                    <span class="material-symbols-outlined">edit</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                            </div>
+                        </div>
+                    `;
+
+                    // 5. Position choisie :
+                    //    Si un commentaire "position: x,y" existe → on l'utilise
+                    //    Sinon → position automatique
+                    let x, y;
+
+                    if (manualPos) {
+                        x = manualPos.x;
+                        y = manualPos.y;
+                    } else {
+                        x = itemIndex * 10;
+                        y = itemIndex * 50;
+                    }
+
+                    const nodeId = flowEditor.addNode(job, 1, 1, x, y, job, {}, html);
+                    positions[job] = nodeId;
+                    itemIndex++;
+                });
+
+                // 6. Connexions
+                items.forEach(item => {
+                    const job = item.key.value;
+                    const jobData = item.value.toJSON();
+                    const needs = jobData == null ? [] : (jobData.needs || []);
+                    const needList = Array.isArray(needs) ? needs : [needs];
+
+                    needList.forEach(dep => {
+                        if (positions[dep]) {
+                            flowEditor.addConnection(
+                                positions[dep],
+                                positions[job],
+                                "output_1",
+                                "input_1"
+                            );
+                        }
+                    });
+                });
+            }
+            
+            function onComponentMove(id) {
+                const node = flowEditor.getNodeFromId(id);
+                setJobPosition(node.name, node.pos_x, node.pos_y);
+            }
+
+            function setJobPosition(jobName, newX, newY) {
+                var code = editorTxt.getValue().split("\n");
+
+                jobName = jobName + ":"
+
+                let index = 0;
+                for(line of code) {
+                    if(line.trim() == jobName) {
+                        if(index == 0){
+                            // create new line above
+                            code.splice(0, 0, `### job.position: ${newX}, ${newY}`);
+                        }else{
+                            // verify commentary above
+                            if(code[index-1].startsWith("### job.position:")){
+                                code[index-1] = `### job.position: ${newX}, ${newY}`;
+                            }else{
+                                code.splice(index, 0, `### job.position: ${newX}, ${newY}`);
+                            }
+                        }
+                        break;
+                    }
+
+                    index++;
+                }
+
+                editorTxt.setValue(code.join("\n"));
+            }
+        </script>
+    }
+
+    <div class="h-100 d-flex flex-column">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="btn btn-outline-light p-0 lh-0" id="nav-return-tab" type="button" href="/Sequence">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                </a>
+                <button class="nav-link active p-0 lh-0" id="nav-viewer-tab" data-bs-toggle="tab" data-bs-target="#nav-viewer" type="button" role="tab" aria-controls="nav-viewer" aria-selected="true" onclick="displayGraph()">
+                    <span class="material-symbols-outlined">account_tree</span>
+                </button>
+                <button class="nav-link p-0 lh-0" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-code" type="button" role="tab" aria-controls="nav-code" aria-selected="false">
+                    <span class="material-symbols-outlined">code</span>
+                </button>
+                <button class="btn btn-outline-light p-0 lh-0" type="button" onclick="yamlToDrawflow()">
+                    <span class="material-symbols-outlined" style="color: green;">play_arrow</span>
+                </button>
+                <button class="btn btn-outline-light p-0 lh-0" type="button">
+                    <span class="material-symbols-outlined">save</span>
+                </button>
+                <button class="btn btn-outline-light p-0 lh-0" type="button">
+                    <span class="material-symbols-outlined" style="color: green;">experiment</span>
+                </button>
+                <button class="btn btn-outline-light p-0 lh-0" type="button" onclick="openWithVS()">
+                    <img src="~/img/vscode-icon.svg" style="height:24px; transform: scale(.75);"/>
+                </button>
+                <p class="m-0 text-monospace p-left-3">
+                    @Model.Ressource<small class="text-secondary">.yaml</small>
+                </p>
+            </div>
+        </nav>
+        <div class="tab-content w-100 h-100" id="nav-tabContent">
+            <div class="tab-pane fade" id="nav-return" role="tabpanel" aria-labelledby="nav-return-tab"></div>
+            <div class="tab-pane fade w-100 h-100" id="nav-code" role="tabpanel" aria-labelledby="nav-code-tab">
+                <div id="editor" class="h-100"></div>
+            </div>
+            <div class="tab-pane fade show active w-100 h-100" id="nav-viewer" role="tabpanel" aria-labelledby="nav-viewer-tab">
+                <div id="drawflow"></div>
+            </div>
+        </div>
+    </div>
+
+}
+

@@ -1,0 +1,269 @@
+﻿@page
+@model IndexModel
+@{
+}
+@section Scripts {
+    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script> *@
+
+@*<!-- BASE64 STREAM -->
+     <script>
+        var LastFrame = Date.now()
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/videoHub")
+            .build();
+
+        connection.on("ReceiveFrame", function (base64Image) {
+            document.getElementById("videoFrame").src = "data:image/jpeg;base64," + base64Image;
+            document.getElementById("LastFrame").innerHTML = Math.floor(1/((Date.now() - LastFrame)/1000))
+            LastFrame = Date.now()
+        });
+
+        connection.start().catch(err => console.error(err));
+    </script>
+ *@
+
+    <script>
+        document.getElementById("STD").onclick = function(e){
+            $.ajax({
+                url: "https://localhost:7083/api/videoStream/apply/0",
+                type: 'GET',
+            });
+        };
+
+        document.getElementById("MD1").onclick = function(e){
+            $.ajax({
+                url: "https://localhost:7083/api/videoStream/apply/1",
+                type: 'GET',
+            });
+        };
+
+        document.getElementById("MD2").onclick = function(e){
+            var sigma = document.getElementById("sigma").value;
+            var kernelSize = document.getElementById("kernelSize").value;
+
+
+            $.ajax({
+                url: "https://localhost:7083/api/videoStream/apply/2?parameter1=" + kernelSize + "&parameter2=" + sigma,
+                type: 'GET',
+            });
+        };
+    </script>
+
+    <!-- CURVE FILTER -->
+    <script>
+        document.getElementById("MD2-param").onclick = function(e){
+            $('#paramModal').modal('toggle')
+        };
+    </script>
+
+    <!-- CURVE FILTER : MODAL -->
+    <script>
+        function drawCurve() {
+            const canvas = document.getElementById("gaussCanvas");
+            const ctx = canvas.getContext("2d");
+
+            // Efface le canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const sigma = parseFloat(document.getElementById("sigma").value);
+            const mean = 0; // Moyenne
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Échelle
+            const scaleX = 50; // pixels par unité
+            const scaleY = 200; // pixels pour la hauteur max
+
+            // Fonction de densité de probabilité de Gauss
+            function gaussian(x, mean, sigma) {
+                return (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-((x - mean) ** 2) / (2 * sigma ** 2));
+            }
+
+            // Tracer les axes
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+            ctx.lineTo(width, height); // Axe X
+            ctx.moveTo(width / 2, 0);
+            ctx.lineTo(width / 2, height); // Axe Y
+            ctx.strokeStyle = "#333";
+            ctx.stroke();
+
+            // Dessiner la courbe de Gauss
+            ctx.beginPath();
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+
+            for (let x = -8 * sigma; x <= 8 * sigma; x += 0.01) {
+                const px = width / 2 + x * scaleX;
+                const py = height - gaussian(x, mean, sigma) * scaleY;
+
+                if (x === -8 * sigma) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.stroke();
+        }
+
+        document.getElementById("sigma").oninput = function(){
+            this.nextElementSibling.value = this.value;
+            drawCurve();
+        }
+
+        drawCurve();
+    </script>
+
+    <!-- STREAM MANAGEMENT -->
+    <script>
+        let cameraStarted = false;
+        var guid = "bda3b6e6-45eb-4c6d-b1a4-82dccdc88fe7";
+
+        document.getElementById("ONOFF").onclick = function(e){
+
+            document.getElementById("ONOFF").disabled = true;
+            if(cameraStarted){
+                $.ajax({
+                    url: "https://localhost:7083/api/videoStream/stop?cameraInstance="+guid,
+                    type: 'POST',
+                    success: function(){
+                        cameraStarted = false;
+                        document.getElementById("ONOFF").disabled = false;
+                        document.getElementById("ONOFF").className = "btn btn-primary mb-1 w-100 text-start";
+                        document.getElementById("ONOFF").innerHTML = "Démarrer";
+                    },
+                    error: function(){
+                        document.getElementById("ONOFF").disabled = false;
+                    }
+                });
+            }else{
+                $.ajax({
+                    url: "https://localhost:7083/api/videoStream/start?cameraInstance="+guid,
+                    type: 'POST',
+                    success: function(){
+                        cameraStarted = true;
+                        document.getElementById("ONOFF").disabled = false;
+                        document.getElementById("ONOFF").className = "btn btn-danger w-100 text-start";
+                        document.getElementById("ONOFF").innerHTML = "Stop";
+                    },
+                    error: function(){
+                        document.getElementById("ONOFF").disabled = false;
+                    }
+                });
+            }
+        };
+    </script>
+
+    <script>
+        $.ajax({
+            url: "https://localhost:7083/api/videostream/allcamera",
+            type: 'GET',
+            success: function(e){
+                var str = "";
+                for (const [key, value] of Object.entries(e)) {
+                    str += `<option value="${key}">${value}</option>`;
+                }
+                document.getElementById("CAM").innerHTML += str;
+            },
+            error: function(){
+            }
+        });
+
+        document.getElementById("CAM").addEventListener("change", function() {
+            guid = this.value;
+        });
+    </script>
+
+    @* <!-- FPS -->
+    <script>
+        let fpsCounter = document.getElementById("LastFrame");
+        let img = document.getElementById("SW");
+        let lastTimestamp = performance.now();
+        let frameCount = 0;
+        let fps = 0;
+
+
+        // Fonction pour calculer le FPS chaque seconde
+        setInterval(() => {
+            fps = frameCount;
+            frameCount = 0; // Reset du compteur
+            fpsCounter.textContent = fps; // Affichage des FPS
+        }, 1000); // Toutes les secondes
+
+        img.onload = function () {
+            frameCount++;
+        };
+    </script>
+    *@
+}
+
+<div class="m-0 h-100-max h-100">
+    <div class="container m-0 p-0 w-100 h-100 w-100-min">
+        <div class="d-flex m-0 p-0 h-100 w-100">
+            <div class="col-8 p-0">
+                @await Html.PartialAsync("_CameraFabric")
+            </div>
+            <div class="col-4 p-0">
+                <div class="d-flex flex-column">
+                    <table>
+                        <thead></thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <select id="CAM" class="form-select w-100 text-start" aria-label="Default select example">
+                                        <option selected>None</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="ONOFF" class="btn btn-primary w-100 text-start">Démarrer/Arreter</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="STD" class="btn btn-outline-secondary w-100 text-start">Source</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="MD1" class="btn btn-outline-secondary w-100 text-start">Nuances de gris</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="d-flex">
+                                    <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
+                                    <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="paramModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>Parametres du filtre</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="kernelSize">Taille du noyeau</label>
+                        <input type="text" class="form-control" id="kernelSize" placeholder="11" value="11">
+                    </div>
+                    <div class="form-group">
+                        <label for="sigma">Ecart type</label>
+                        <div class="d-flex">
+                            <input type="range" class="form-range order-1" id="sigma" value="1,5" min=".1" max="5" step=".1">
+                            <output class="order-0 mx-2">1.5</output>
+                        </div>
+                        <canvas id="gaussCanvas" class="m-1 w-100" width="400" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

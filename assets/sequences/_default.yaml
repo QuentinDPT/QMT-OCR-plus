@@ -1,0 +1,17 @@
+### job.position: 216, 436
+acquisition:
+
+### job.position: 604, 432
+prepare:
+
+### job.position: 384, 802
+test:
+  needs:
+    - acquisition
+    - prepare
+
+### job.position: 640, 1170
+deploy:
+  needs:
+    - test
+    - prepare
