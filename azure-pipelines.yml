@@ -6,11 +6,9 @@
 trigger:
 - master
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+pool:
+  name: 'Default'   # Nom de ton agent pool
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+- powershell: Write-Host "Hello World depuis mon Windows 11"
+  displayName: 'Hello depuis agent local'
