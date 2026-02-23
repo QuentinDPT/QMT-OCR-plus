@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  name: 'Default'   # Nom de ton agent pool
+  name: 'Home Lab'   # Nom de ton agent pool
 
 steps:
 - powershell: Write-Host "Hello World depuis mon Windows 11"
