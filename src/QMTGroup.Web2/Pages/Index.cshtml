@@ -82,7 +82,7 @@
             document.getElementById("ONOFF").disabled = true;
             if(cameraStarted){
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/stop?cameraInstance="+guid,
+                    url: "/api/videoStream/stop?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = false;
@@ -96,7 +96,7 @@
                 });
             }else{
                 $.ajax({
-                    url: "https://localhost:7083/api/videoStream/start?cameraInstance="+guid,
+                    url: "/api/videoStream/start?cameraInstance="+guid,
                     type: 'POST',
                     success: function(){
                         cameraStarted = true;
@@ -114,7 +114,7 @@
     
     <script>
         $.ajax({
-            url: "https://localhost:7083/api/videostream/allcamera",
+            url: "/api/videostream/allcamera",
             type: 'GET',
             success: function(e){
                 var str = "";
