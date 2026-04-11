@@ -1,0 +1,105 @@
+### job.position: -206, -30
+acquisition:
+  stage: acquisition
+  script: echo "Acquire"
+
+### job.position: 68, -28
+gray-scale:
+  stage: acquisition
+  needs:
+    - acquisition
+  script: grayScale
+
+### job.position: 345, -91
+tige-peigne-lineaire-gauche:
+  stage: compute
+  needs:
+    - gray-scale
+  script: peigneLineaire
+
+### job.position: 350, 23
+tige-peigne-lineaire-droit:
+  stage: compute
+  needs:
+    - gray-scale
+  script: peigneLineaire
+
+### job.position: 743, -30
+tige-moyenne-2-points:
+  stage: compute
+  needs:
+    - tige-peigne-lineaire-gauche
+    - tige-peigne-lineaire-droit
+  script: moyennePoints
+
+### job.position: 1103, -28
+tige-peigne-lineaire-tige:
+  stage: compute
+  needs:
+    - tige-moyenne-2-points
+  script: peigneLineaire
+
+### job.position: 1472, -30
+tige-regression-lineaire:
+  stage: compute
+  needs:
+    - tige-peigne-lineaire-tige
+  script: regressionLineaire
+
+### job.position: 1843, -42
+tige-milieu-segment:
+  stage: compute
+  needs:
+    - tige-regression-lineaire
+  script: milieuSegment
+
+### job.position: 2133, -2.4285714285714284
+tige-couleur-moyenne-gauche:
+  stage: compute
+  needs:
+    - tige-milieu-segment
+  script: couleurMoyenne
+
+### job.position: 2133, -151.42857142857142
+tige-couleur-moyenne-droit:
+  stage: compute
+  needs:
+    - tige-milieu-segment
+  script: couleurMoyenne
+
+### job.position: 350, 149
+poignee-peigne-lineaire-droit:
+  stage: compute
+  needs :
+    - gray-scale
+  script: peigneLineaire
+
+### job.position: 351, 273
+poignee-peigne-lineaire-gauche:
+  stage: compute
+  needs :
+    - gray-scale
+  script: peigneLineaire
+
+### job.position: 827, 197
+poignee-moyenne-2-points:
+  stage: compute
+  needs :
+    - poignee-peigne-lineaire-droit
+    - poignee-peigne-lineaire-gauche
+  script: moyennePoints
+
+### job.position: 1300, 125
+poignee-couleur-moyenne-gauche:
+  stage: compute
+  needs:
+    - poignee-moyenne-2-points
+  script: couleurMoyenne
+
+### job.position: 1304, 249
+poignee-couleur-moyenne-droit:
+  stage: compute
+  needs:
+    - poignee-moyenne-2-points
+  script: couleurMoyenne
+  

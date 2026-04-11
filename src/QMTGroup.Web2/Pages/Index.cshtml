@@ -1,55 +1,12 @@
 ﻿@page
 @model IndexModel
 @{
+    var visionEditorOptions = new Dictionary<string, string>()
+    {
+        { "visionEditorId", "Bonjour" },
+    };
 }
 @section Scripts {
-    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.0/signalr.min.js"></script> *@
-
-@*<!-- BASE64 STREAM -->
-     <script>
-        var LastFrame = Date.now()
-
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/videoHub")
-            .build();
-
-        connection.on("ReceiveFrame", function (base64Image) {
-            document.getElementById("videoFrame").src = "data:image/jpeg;base64," + base64Image;
-            document.getElementById("LastFrame").innerHTML = Math.floor(1/((Date.now() - LastFrame)/1000))
-            LastFrame = Date.now()
-        });
-
-        connection.start().catch(err => console.error(err));
-    </script>
- *@
-
-    <script>
-        document.getElementById("STD").onclick = function(e){
-            $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/0",
-                type: 'GET',
-            });
-        };
-
-        document.getElementById("MD1").onclick = function(e){
-            $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/1",
-                type: 'GET',
-            });
-        };
-
-        document.getElementById("MD2").onclick = function(e){
-            var sigma = document.getElementById("sigma").value;
-            var kernelSize = document.getElementById("kernelSize").value;
-
-
-            $.ajax({
-                url: "https://localhost:7083/api/videoStream/apply/2?parameter1=" + kernelSize + "&parameter2=" + sigma,
-                type: 'GET',
-            });
-        };
-    </script>
-
     <!-- CURVE FILTER -->
     <script>
         document.getElementById("MD2-param").onclick = function(e){
@@ -154,7 +111,7 @@
             }
         };
     </script>
-
+    
     <script>
         $.ajax({
             url: "https://localhost:7083/api/videostream/allcamera",
@@ -172,37 +129,26 @@
 
         document.getElementById("CAM").addEventListener("change", function() {
             guid = this.value;
+            window.visionEditor.new(document.getElementById("Bonjour"), {
+              rawVideoStream: [
+                "/mjpeg-stream?cameraInstance=" + this.value
+              ]
+            });
+        });
+
+        document.getElementById("Shapes").addEventListener("click", function(){
+            window.visionEditor[0].addShape("line");
+            window.visionEditor[0].addShape("circle");
+            window.visionEditor[0].addShape("rectangle");
         });
     </script>
-
-    @* <!-- FPS -->
-    <script>
-        let fpsCounter = document.getElementById("LastFrame");
-        let img = document.getElementById("SW");
-        let lastTimestamp = performance.now();
-        let frameCount = 0;
-        let fps = 0;
-
-
-        // Fonction pour calculer le FPS chaque seconde
-        setInterval(() => {
-            fps = frameCount;
-            frameCount = 0; // Reset du compteur
-            fpsCounter.textContent = fps; // Affichage des FPS
-        }, 1000); // Toutes les secondes
-
-        img.onload = function () {
-            frameCount++;
-        };
-    </script>
-    *@
 }
 
 <div class="m-0 h-100-max h-100">
     <div class="container m-0 p-0 w-100 h-100 w-100-min">
         <div class="d-flex m-0 p-0 h-100 w-100">
             <div class="col-8 p-0">
-                @await Html.PartialAsync("_CameraFabric")
+                @await Html.PartialAsync("_CameraKonva", visionEditorOptions)
             </div>
             <div class="col-4 p-0">
                 <div class="d-flex flex-column">
@@ -235,6 +181,11 @@
                                 <td class="d-flex">
                                     <button id="MD2" class="btn btn-outline-secondary w-100 text-start">Filtre gaussien</button>
                                     <button id="MD2-param" class="btn btn-outline-secondary" data-toggle="modal" data-target=".bd-example-modal-sm">⚙️</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="Shapes" class="btn btn-outline-secondary w-100 text-start">Add shapes</button>
                                 </td>
                             </tr>
                         </tbody>
