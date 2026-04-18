@@ -6,9 +6,6 @@ namespace QMTGroup.Web.Pages
 {
     public class SequenceModel : PageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public string? Ressource { get; set; }
-
         public string DirectoryLocation => Path.GetFullPath(_sequencerStorage.GetDirectory()).Replace("\\","/");
 
         public SequencerStorageService _sequencerStorage { get; }
@@ -18,7 +15,6 @@ namespace QMTGroup.Web.Pages
         {
             _sequencerStorage = sequencerStorage;
         }
-
 
         public void OnGet()
         {

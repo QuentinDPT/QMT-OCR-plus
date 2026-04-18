@@ -1,0 +1,344 @@
+﻿@page
+@model QMTGroup.Web.Pages.S.ItemModel
+@{
+    var visionEditorOptions = new Dictionary<string, string>()
+    {
+        { "visionEditorId", "Bonjour" },
+    };
+}
+
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css">
+<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-light-theme.css">
+<style>
+    /* Fond global */
+    .lm_goldenlayout {
+        background: #FF000000;
+    }
+
+    /* Header (tabs) */
+    .lm_header {
+        background: #FF00FF00;
+    }
+
+    /* Onglets */
+    .lm_tab {
+        background: #CCC;
+        border: solid 1px #CCC;
+        border-bottom: 0;
+    }
+
+        /* Onglet actif */
+        .lm_tab.lm_active {
+            background: #FFF;
+        }
+
+    /* Contenu */
+    .lm_content {
+        background: #FFFFFF;
+        border-top: solid 1px #CCC;
+    }
+
+    /* Splitter (la barre draggable) */
+    .lm_splitter {
+        background: #FF000000;
+    }
+</style>
+
+
+@section Scripts {
+    <script src="https://golden-layout.com/files/latest/js/goldenlayout.js"></script>
+
+    <script>
+        // Configuration du layout
+        const config = {
+            settings: {
+                showPopoutIcon: false,
+                showCloseIcon: false
+            },
+            content: [{
+                type: 'row',
+                content: [
+                    {
+                        type: 'component',
+                        componentName: 'codeEditor',
+                        title: '<span class="material-symbols-outlined" style="font-size: 1rem;position: absolute;">code</span> <span style="padding-left:1.2rem;">Code</span>',
+                        isClosable: false
+                    },
+                    {
+                        type: 'column',
+                        content: [
+                            {
+                                type: 'component',
+                                componentName: 'viewerEditor',
+                                title: '<span class="material-symbols-outlined" style="font-size: 1rem;position: absolute;">camera</span> <span style="padding-left:1.2rem;">Viewer</span>',
+                                isClosable: false
+                            },
+                            {
+                                type: 'component',
+                                componentName: 'processEditor',
+                                title: '<span class="material-symbols-outlined" style="font-size: 1rem;position: absolute;">account_tree</span> <span style="padding-left:1.2rem;">Process</span>',
+                                isClosable: false
+                            }
+                        ]
+                    }
+                ]
+            }]
+        };
+
+        // Initialisation
+        const myLayout = new GoldenLayout(config, document.getElementById('layoutContainer'));
+
+        // Enregistrement d’un composant
+        myLayout.registerComponent('testComponent', function(container, state) {
+            container.getElement().html(`
+                <div style="padding:10px;">
+                    <h3>Bonjour 👋</h3>
+                    <p>Contenu dynamique ici</p>
+                </div>
+            `);
+        });
+
+        myLayout.registerComponent('codeEditor', function(container, state) {
+            container.getElement().html(`
+                <div id="editor" class="h-100"></div>
+            `);
+        });
+
+        myLayout.registerComponent('processEditor', function(container, state) {
+            container.getElement().html(`
+                <div id="drawflow"></div>
+            `);
+        });
+
+        myLayout.registerComponent('viewerEditor', function(container, state) {
+            const html = document.getElementById("vision-editor-template").innerHTML;
+            container.getElement().html(html);
+        });
+
+        // Lancement
+        myLayout.init();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/drawflow@0.0.45/dist/drawflow.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js"></script>
+    <script src="/lib/yaml/yaml.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
+
+    <script>
+        var sequenceName = "@Model.Id";
+
+        window.addEventListener("load", function(){
+            $.ajax({
+                url: '/api/sequencer/' + sequenceName,
+                type: 'GET',
+                success: function (response) {
+                    editorTxt.setValue(response);
+                },
+                error: function (error) {
+                    console.error('GET Error:', error);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        var editorTxt;
+
+        require.config({
+            paths: {
+                'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs'
+            }
+        });
+
+        require(['vs/editor/editor.main'], function () {
+            editorTxt = monaco.editor.create(document.getElementById('editor'), {
+                value: "",
+                language: "yaml",
+                theme: "vs-light",
+                automaticLayout: true
+            });
+        });
+    </script>
+
+    <script>
+        let flowEditor = null;
+
+        window.onload = () => {
+            const container = document.getElementById("drawflow");
+            flowEditor = new Drawflow(container);
+            flowEditor.start();
+
+            flowEditor.on('nodeMoved', function(id) {
+                onComponentMove(id);
+            });
+        };
+
+        function extractPositionFromComment(comment) {
+            if (!comment) return null;
+
+            // Recherche d’un pattern du style "position: X,Y"
+            const match = comment.match(/## job.position\s*:\s*(\-?[0-9]+)\s*,\s*(\-?[0-9]+)/i);
+            if (!match) return null;
+
+            return {
+                x: parseInt(match[1], 10),
+                y: parseInt(match[2], 10)
+            };
+        }
+
+        function openWithVS(){
+            window.location = "vscode://file/@Model.DirectoryLocation/@Model.Id" + ".yaml";
+        }
+
+        function openWithCodium(){
+            window.location = "vscodium://file/@Model.DirectoryLocation/@Model.Id" + ".yaml";
+        }
+
+        function displayGraph(){
+            setTimeout(yamlToDrawflow, 100);
+        }
+
+        function yamlToDrawflow() {
+            const yamlText = editorTxt.getValue();
+
+            // 1. Parser YAML en mode AST (pour avoir les commentaires)
+            const doc = YAML.parseDocument(yamlText);
+
+            // 2. Nettoyer Drawflow
+            flowEditor.clear();
+            const positions = {};
+
+            const items = doc.contents.items;
+            var itemIndex = 0;
+
+            // 4. Parcourir chaque job
+            items.forEach((item, i) => {
+                const job = item.key.value;
+                const jobData = item.value.toJSON();
+
+                const comment = item.key.commentBefore || "";
+                const manualPos = extractPositionFromComment(comment);
+
+                const html = `
+                    <div class="sequence-operation card">
+                        <div class="card-header d-flex">
+                            <div class="card-title m-0 d-flex w-100 justify-content-between align-items-baseline">
+                                <h5 class="m-0">
+                                    <span class="material-symbols-outlined" style="font-size:2rem;">memory</span>
+                                    ${job}
+                                </h5>
+                                <span class="material-symbols-outlined">edit</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                        </div>
+                    </div>
+                `;
+
+                // 5. Position choisie :
+                //    Si un commentaire "position: x,y" existe → on l'utilise
+                //    Sinon → position automatique
+                let x, y;
+
+                if (manualPos) {
+                    x = manualPos.x;
+                    y = manualPos.y;
+                } else {
+                    x = itemIndex * 10;
+                    y = itemIndex * 50;
+                }
+
+                const nodeId = flowEditor.addNode(job, 1, 1, x, y, job, {}, html);
+                positions[job] = nodeId;
+                itemIndex++;
+            });
+
+            // 6. Connexions
+            items.forEach(item => {
+                const job = item.key.value;
+                const jobData = item.value.toJSON();
+                const needs = jobData == null ? [] : (jobData.needs || []);
+                const needList = Array.isArray(needs) ? needs : [needs];
+
+                needList.forEach(dep => {
+                    if (positions[dep]) {
+                        flowEditor.addConnection(
+                            positions[dep],
+                            positions[job],
+                            "output_1",
+                            "input_1"
+                        );
+                    }
+                });
+            });
+        }
+
+        function onComponentMove(id) {
+            const node = flowEditor.getNodeFromId(id);
+            setJobPosition(node.name, node.pos_x, node.pos_y);
+        }
+
+        function setJobPosition(jobName, newX, newY) {
+            var code = editorTxt.getValue().split("\n");
+
+            jobName = jobName + ":"
+
+            let index = 0;
+            for(line of code) {
+                if(line.trim() == jobName) {
+                    if(index == 0){
+                        // create new line above
+                        code.splice(0, 0, `### job.position: ${newX}, ${newY}`);
+                    }else{
+                        // verify commentary above
+                        if(code[index-1].startsWith("### job.position:")){
+                            code[index-1] = `### job.position: ${newX}, ${newY}`;
+                        }else{
+                            code.splice(index, 0, `### job.position: ${newX}, ${newY}`);
+                        }
+                    }
+                    break;
+                }
+
+                index++;
+            }
+
+            editorTxt.setValue(code.join("\n"));
+        }
+    </script>
+}
+
+<div class="h-100 d-flex flex-column">
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="btn btn-outline-light p-0 lh-0" id="nav-return-tab" type="button" href="/Sequence">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <button class="btn btn-outline-light p-0 lh-0" type="button" onclick="yamlToDrawflow()">
+                <span class="material-symbols-outlined" style="color: green;">play_arrow</span>
+            </button>
+            <button class="btn btn-outline-light p-0 lh-0" type="button">
+                <span class="material-symbols-outlined">save</span>
+            </button>
+            <button class="btn btn-outline-light p-0 lh-0" type="button">
+                <span class="material-symbols-outlined" style="color: green;">experiment</span>
+            </button>
+            <button class="btn btn-outline-light p-0 lh-0" type="button" onclick="openWithVS()">
+                <img src="~/img/vscode-icon.svg" style="height:24px; transform: scale(.75);" />
+            </button>
+            <button class="btn btn-outline-light p-0 lh-0" type="button" onclick="openWithCodium()">
+                <img src="~/img/codium-icon.png" style="height:24px; transform: scale(.75);" />
+            </button>
+            <p class="m-0 text-monospace p-left-3">
+                @Model.Id<small class="text-secondary">.yaml</small>
+            </p>
+        </div>
+    </nav>
+    <div class="tab-content w-100 h-100 overflow-hidden" id="nav-tabContent">
+        <div id="layoutContainer" class="w-100 h-100" style="width:100%; height:100%;"></div>
+    </div>
+    <div id="vision-editor-template">
+        @await Html.PartialAsync("_VisionEditorKonva", visionEditorOptions)
+    </div>
+</div>

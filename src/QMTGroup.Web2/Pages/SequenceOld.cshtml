@@ -80,7 +80,7 @@
 }
 
 
-@if (string.IsNullOrEmpty(Model.Ressource))
+@if (true)
 {
     @section Scripts{
         <script>
@@ -235,7 +235,7 @@ else
         <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 
         <script>
-            var sequenceName = "@Model.Ressource";
+            var sequenceName = "Model.Ressource";
 
             window.addEventListener("load", function(){
                 $.ajax({
@@ -297,11 +297,11 @@ else
             }
 
             function openWithVS(){
-                window.location = "vscode://file/@Model.DirectoryLocation/@Model.Ressource" + ".yaml";
+                window.location = "vscode://file/@Model.DirectoryLocation/Model.Ressource" + ".yaml";
             }
 
             function openWithCodium(){
-                window.location = "vscodium://file/@Model.DirectoryLocation/@Model.Ressource" + ".yaml";
+                window.location = "vscodium://file/@Model.DirectoryLocation/Model.Ressource" + ".yaml";
             }
 
             function displayGraph(){
@@ -446,7 +446,7 @@ else
                     <img src="~/img/codium-icon.png" style="height:24px; transform: scale(.75);"/>
                 </button>
                 <p class="m-0 text-monospace p-left-3">
-                    @Model.Ressource<small class="text-secondary">.yaml</small>
+                    Model.Ressource<small class="text-secondary">.yaml</small>
                 </p>
             </div>
         </nav>

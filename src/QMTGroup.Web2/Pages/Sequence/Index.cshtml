@@ -1,0 +1,147 @@
+﻿@page
+@model QMTGroup.Web.Pages.S.IndexModel
+@{
+    ViewData["Title"] = "Sequence";
+}
+@section Scripts{
+    <script>
+        function addSequence(title, description) {
+            const template = document.getElementById('sequence-item-template');
+            const list = document.getElementById('sequence-list');
+
+            // Clone du template
+            const clone = template.content.cloneNode(true);
+
+            // Bind des données
+            clone.querySelector('.item-title').textContent = title;
+            if(description == "")
+                clone.querySelector('.item-description').style = "display: none;";
+            else
+                clone.querySelector('.item-description').textContent = description;
+
+            // Bouton edit
+            clone.querySelector('.btn-edit').onclick = () => {
+                window.location = `/Sequence/${title}`;
+            };
+
+            // Bouton delete
+            clone.querySelector('.btn-delete').onclick = () => {
+                $.ajax({
+                    url: 'api/sequencer',
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify(title),
+                    success: function (response) {
+                        window.location = window.location;
+                    },
+                    error: function (error) {
+                        console.error('GET Error:', error);
+                    }
+                });
+            };
+
+            list.appendChild(clone);
+        }
+
+        $.ajax({
+            url: 'api/sequencer',
+            type: 'GET',
+            success: function (response) {
+                console.log(response);
+
+                for(const i of response){
+                    addSequence(i.title, i.description);
+                }
+            },
+            error: function (error) {
+                console.error('GET Error:', error);
+            }
+        });
+
+        function createNewSequence() {
+            var sequenceName = document.getElementById("addSequenceName").value;
+
+            if(sequenceName == ""){
+                console.error("Can'this add an empty sequence name.");
+                return;
+            }
+
+            $.ajax({
+                url: 'api/sequencer',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(sequenceName),
+                success: function (response) {
+                    window.location = "/Sequence/" + sequenceName ;
+                },
+                error: function (error) {
+                    console.error('GET Error:', error);
+                }
+            });
+        }
+
+        document.getElementById("addNewSequenceButton").onclick = createNewSequence;
+    </script>
+
+}
+
+<h2>Sequences</h2>
+<p>
+    Une Séquence transforme une image en données décisionnelles.
+</p>
+<p>
+    Elle orchestre automatiquement une série d’analyses et de mesures pour extraire les indicateurs clés nécessaires à vos contrôles qualité et à vos prises de décision. Chaque séquence fournit des métriques fiables et exploitables, adaptées à vos exigences industrielles.
+</p>
+
+<div>
+    <button class="btn btn-outline-primary rounded-pill" onclick="window.location = `vscode://file/@Model.DirectoryLocation`;">
+        <img style="height:24px; transform: scale(.75);" src="/img/vscode-icon.svg" />
+    </button>
+    <button class="btn btn-outline-primary rounded-pill" onclick="window.location = `vscodium://file/@Model.DirectoryLocation`;">
+        <img style="height:24px; transform: scale(.75);" src="/img/codium-icon.png" />
+    </button>
+</div>
+
+<template id="sequence-item-template">
+    <li style="background:#eee" class="list-group-item d-flex justify-content-between m-1">
+        <div class="d-flex flex-column justify-content-around">
+            <h5 class="item-title m-0"></h5>
+            <small class="item-description p-left-3"></small>
+        </div>
+
+        <div class="d-flex">
+            <button class="btn btn-secondary m-1 btn-edit">
+                <span class="material-symbols-outlined">edit</span>
+            </button>
+
+            <div class="dropdown m-1">
+                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="material-symbols-outlined">more_horiz</span>
+                </button>
+
+                <div class="dropdown-menu">
+                    <div class="dropdown-item d-flex additional-info">
+                        <span class="material-symbols-outlined">download</span>
+                        <span>Download</span>
+                    </div>
+
+                    <div class="dropdown-item d-flex additional-info btn-delete">
+                        <span class="material-symbols-outlined">delete</span>
+                        <span>Supress</span>
+                    </div>
+
+                    <div class="dropdown-item d-flex additional-info">
+                        <span class="material-symbols-outlined">info</span>
+                        <span>Informations</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+</template>
+<ul id="sequence-list" class="list-group list-group-flush">
+</ul>
+<input type="text" id="addSequenceName" />
+<button type="button" class="btn btn-primary" id="addNewSequenceButton">
+    <span class="material-symbols-outlined">add</span>
+</button>
