@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QMTGroup.Web.Service;
 
-namespace QMTGroup.Web.Pages.Sequence;
+namespace QMTGroup.Web.Pages.Script;
 
-public class IndexModel : PageModel
+public class ItemModel : PageModel
 {
     public string DirectoryLocation => Path.GetFullPath(_sequencerStorage.GetDirectory()).Replace("\\", "/");
 
@@ -12,12 +11,13 @@ public class IndexModel : PageModel
 
     public SequencerStorageService _sequencerStorage { get; }
 
-    public IndexModel(SequencerStorageService sequencerStorage)
+    public ItemModel(SequencerStorageService sequencerStorage)
     {
         _sequencerStorage = sequencerStorage;
     }
 
     public void OnGet()
     {
+        Id = RouteData.Values["id"]?.ToString();
     }
 }

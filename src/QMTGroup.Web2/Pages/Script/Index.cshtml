@@ -1,13 +1,13 @@
 ﻿@page
-@model QMTGroup.Web.Pages.Sequence.IndexModel
+@model QMTGroup.Web.Pages.Script.IndexModel
 @{
     ViewData["Title"] = "Sequence";
 }
-@section Scripts{
+@section Scripts {
     <script>
         function addSequence(title, description) {
-            const template = document.getElementById('sequence-item-template');
-            const list = document.getElementById('sequence-list');
+            const template = document.getElementById('script-item-template');
+            const list = document.getElementById('script-list');
 
             // Clone du template
             const clone = template.content.cloneNode(true);
@@ -21,13 +21,13 @@
 
             // Bouton edit
             clone.querySelector('.btn-edit').onclick = () => {
-                window.location = `/Sequence/${title}`;
+                window.location = `/Script/${title}`;
             };
 
             // Bouton delete
             clone.querySelector('.btn-delete').onclick = () => {
                 $.ajax({
-                    url: 'api/sequencer',
+                    url: 'api/code',
                     type: 'DELETE',
                     contentType: 'application/json',
                     data: JSON.stringify(title),
@@ -44,7 +44,7 @@
         }
 
         $.ajax({
-            url: 'api/sequencer',
+            url: 'api/code',
             type: 'GET',
             success: function (response) {
                 console.log(response);
@@ -67,12 +67,12 @@
             }
 
             $.ajax({
-                url: 'api/sequencer',
+                url: 'api/code',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(sequenceName),
                 success: function (response) {
-                    window.location = "/Sequence/" + sequenceName ;
+                    window.location = "/Script/" + sequenceName ;
                 },
                 error: function (error) {
                     console.error('GET Error:', error);
@@ -84,12 +84,12 @@
     </script>
 }
 
-<h2>Sequences</h2>
+<h2>Scripts</h2>
 <p>
-    Une Séquence transforme une image en données décisionnelles.
+    Un script permet de manipuler ou d'extraire des données d'images.
 </p>
 <p>
-    Elle orchestre automatiquement une série d’analyses et de mesures pour extraire les indicateurs clés nécessaires à vos contrôles qualité et à vos prises de décision. Chaque séquence fournit des métriques fiables et exploitables, adaptées à vos exigences industrielles.
+    Ces scripts peuvent être utilisés au sein de séquences.
 </p>
 
 <div>
@@ -101,7 +101,7 @@
     </button>
 </div>
 
-<template id="sequence-item-template">
+<template id="script-item-template">
     <li style="background:#eee" class="list-group-item d-flex justify-content-between m-1">
         <div class="d-flex flex-column justify-content-around">
             <h5 class="item-title m-0"></h5>
@@ -138,7 +138,7 @@
         </div>
     </li>
 </template>
-<ul id="sequence-list" class="list-group list-group-flush">
+<ul id="script-list" class="list-group list-group-flush">
 </ul>
 <input type="text" id="addSequenceName" />
 <button type="button" class="btn btn-primary" id="addNewSequenceButton">

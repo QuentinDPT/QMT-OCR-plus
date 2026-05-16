@@ -5,7 +5,7 @@ using QMTGroup.Web.ViewModel;
 
 namespace QMTGroup.Web.Controller;
 
-[Route("api/[controller]88")]
+[Route("api/[controller]")]
 [ApiController]
 public class CodeController : ControllerBase
 {

@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using QMTGroup.Web.Service;
 
-namespace QMTGroup.Web.Pages.Sequence;
+namespace QMTGroup.Web.Pages.Script;
 
 public class IndexModel : PageModel
 {
@@ -10,9 +9,9 @@ public class IndexModel : PageModel
 
     public string Id { get; set; }
 
-    public SequencerStorageService _sequencerStorage { get; }
+    public CodeStorageService _sequencerStorage { get; }
 
-    public IndexModel(SequencerStorageService sequencerStorage)
+    public IndexModel(CodeStorageService sequencerStorage)
     {
         _sequencerStorage = sequencerStorage;
     }

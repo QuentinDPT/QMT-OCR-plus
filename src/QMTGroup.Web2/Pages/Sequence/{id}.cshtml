@@ -1,5 +1,5 @@
 ﻿@page
-@model QMTGroup.Web.Pages.S.ItemModel
+@model QMTGroup.Web.Pages.Sequence.ItemModel
 @{
     var visionEditorOptions = new Dictionary<string, string>()
     {
@@ -7,8 +7,8 @@
     };
 }
 
-<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-base.css">
-<link rel="stylesheet" href="https://golden-layout.com/files/latest/css/goldenlayout-light-theme.css">
+<link rel="stylesheet" href="~/lib/goldenlayout/goldenlayout-base.min.css">
+<link rel="stylesheet" href="~/lib/goldenlayout/goldenlayout-lightTheme.min.css">
 <style>
     /* Fond global */
     .lm_goldenlayout {
@@ -46,7 +46,7 @@
 
 
 @section Scripts {
-    <script src="https://golden-layout.com/files/latest/js/goldenlayout.js"></script>
+    <script src="~/lib/goldenlayout/goldenlayout.min.js"></script>
 
     <script>
         // Configuration du layout
@@ -113,6 +113,7 @@
         myLayout.registerComponent('viewerEditor', function(container, state) {
             const html = document.getElementById("vision-editor-template").innerHTML;
             container.getElement().html(html);
+            document.getElementById("vision-editor-template").outerHTML = ""; 
         });
 
         // Lancement
