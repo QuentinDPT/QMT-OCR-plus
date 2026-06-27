@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+
+    <style>
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+        }
+
+        .viewer {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+        }
+
+        .video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .overlay-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .overlay-svg {
+            width: 100%;
+            height: 100%;
+            contain: strict;
+            overflow: visible;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="viewer">
+
+        <!-- SVG Overlay -->
+        <div id="overlayContainer"
+             class="overlay-container">
+
+            <svg id="overlaySvg"
+                 class="overlay-svg"
+                 viewBox="0 0 1280 720"
+                 preserveAspectRatio="none">
+            </svg>
+
+        </div>
+
+    </div>
+
+    <script>
+
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+class SvgOverlayRenderer
+{
+    constructor(svg)
+    {
+        this.svg = svg;
+
+        // id -> SVGElement
+        this.elements = new Map();
+    }
+
+    update(frame)
+    {
+        const alive = new Set();
+
+        if (frame == null)
+            return;
+
+        for (const shape of frame)
+        {
+            let element = this.elements.get(shape.id);
+
+            if (!element)
+            {
+                element = this.createShape(shape);
+
+                this.svg.appendChild(element);
+
+                this.elements.set(shape.id, element);
+            }
+
+            this.updateShape(element, shape);
+
+            alive.add(shape.id);
+        }
+
+        // nettoyage
+        for (const [id, element] of this.elements)
+        {
+            if (!alive.has(id))
+            {
+                element.remove();
+                this.elements.delete(id);
+            }
+        }
+    }
+
+    createShape(shape)
+    {
+        switch (shape.type)
+        {
+            case "rect":
+                return document.createElementNS(SVG_NS, "rect");
+
+            case "circle":
+                return document.createElementNS(SVG_NS, "circle");
+
+            case "line":
+                return document.createElementNS(SVG_NS, "line");
+
+            default:
+                throw new Error("Unknown shape type: " + shape.type);
+        }
+    }
+
+    updateShape(element, shape)
+    {
+        switch (shape.type)
+        {
+            case "rect":
+                this.updateRect(element, shape);
+                break;
+
+            case "circle":
+                this.updateCircle(element, shape);
+                break;
+
+            case "line":
+                this.updateLine(element, shape);
+                break;
+        }
+    }
+
+    updateCommonStyle(element, shape)
+    {
+        if (shape.stroke !== undefined)
+            element.setAttribute("stroke", shape.stroke);
+
+        if (shape.fill !== undefined)
+            element.setAttribute("fill", shape.fill);
+
+        if (shape.strokeWidth !== undefined)
+            element.setAttribute("stroke-width", shape.strokeWidth);
+    }
+
+    updateRect(rect, shape)
+    {
+        rect.setAttribute("x", shape.x);
+        rect.setAttribute("y", shape.y);
+
+        rect.setAttribute("width", shape.width);
+        rect.setAttribute("height", shape.height);
+
+        // centre rotation
+        const cx = shape.x + shape.width * 0.5;
+        const cy = shape.y + shape.height * 0.5;
+
+        rect.setAttribute(
+            "transform",
+            `rotate(${shape.rotation} ${cx} ${cy})`
+        );
+
+        this.updateCommonStyle(rect, shape);
+    }
+
+    updateCircle(circle, shape)
+    {
+        circle.setAttribute("cx", shape.cx);
+        circle.setAttribute("cy", shape.cy);
+
+        circle.setAttribute("r", shape.radius);
+
+        this.updateCommonStyle(circle, shape);
+    }
+
+    updateLine(line, shape)
+    {
+        line.setAttribute("x1", shape.x1);
+        line.setAttribute("y1", shape.y1);
+
+        line.setAttribute("x2", shape.x2);
+        line.setAttribute("y2", shape.y2);
+
+        this.updateCommonStyle(line, shape);
+    }
+}
+
+const svg = document.getElementById("overlaySvg");
+
+const renderer = new SvgOverlayRenderer(svg);
+
+const eventSource = new EventSource("/overlay-stream?overlayStreamId=5b994745-2abc-4287-9bdf-7277a76cdb47");
+
+eventSource.onmessage = (event) =>
+{
+    const frame = JSON.parse(event.data);
+
+    renderer.update(frame);
+};
+
+eventSource.onerror = () =>
+{
+    console.log("Overlay stream disconnected");
+};
+
+    </script>
+
+</body>
+</html>
